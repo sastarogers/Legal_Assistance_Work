@@ -3,266 +3,300 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Complete Lawyer Profile - Legal Assist</title> <!-- Updated Title -->
+    <title>Lawyer Dashboard - LegalAssist</title>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* ===== Styles (Keep As Is) ===== */
         :root {
             --primary-bg: #0a0a0a;
             --secondary-bg: #1a1a1a;
             --card-bg: var(--secondary-bg);
-            --input-bg: #2a2a2a;
             --accent: #7E57C2;
             --accent-hover: #673AB7;
             --text-primary: #f5f5f5;
             --text-secondary: #a3a3a3;
             --border-light: rgba(255, 255, 255, 0.1);
-            --gradient-button: linear-gradient(135deg, var(--accent), var(--accent-hover));
-            --bs-border-radius-lg: 0.8rem;
-            --accent-rgb: 126, 87, 194;
+            --gradient: linear-gradient(135deg, #7E57C2 0%, #673AB7 100%);
+            --bs-border-radius-lg: 1rem;
+            --accent-rgb: 126, 87, 194; /* Added for potential use */
         }
-        html, body { height: 100%; overflow-y: auto; overflow-x: hidden; /* Allow scroll */ }
+
+        html, body { height: 100%; } /* Ensure html/body take full height */
         body {
             font-family: 'Inter', sans-serif;
             background: var(--primary-bg);
             color: var(--text-primary);
             min-height: 100vh;
-            padding-top: 1rem; /* Add some top/bottom padding */
-            padding-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
         }
-         .navbar {
+
+        /* --- Navbar Styling --- */
+        .navbar {
             background: rgba(10, 10, 10, 0.95);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border-light);
-            padding: 0.8rem 0;
+            padding: 0.8rem 1rem;
             position: sticky;
             top: 0;
             z-index: 1030;
+            flex-shrink: 0;
         }
-        .navbar-brand.logo {
-            font-weight: 700; letter-spacing: -0.5px; font-size: 1.4rem;
-            color: var(--text-primary); text-decoration: none; display: inline-flex; align-items: center;
-        }
+        .navbar-brand.logo { font-weight: 700; letter-spacing: -0.5px; font-size: 1.4rem; color: var(--text-primary); text-decoration: none; display: inline-flex; align-items: center; margin-right: auto; }
         .logo-icon { color: var(--accent); margin-right: 0.6rem; font-size: 1.5rem; }
-        .details-card {
-            background-color: var(--card-bg); padding: 2.5rem 3rem; border-radius: var(--bs-border-radius-lg);
-            border: 1px solid var(--border-light); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            max-width: 900px; margin: 2rem auto; /* Adjust margin */
+        .navbar-actions { display: flex; align-items: center; gap: 1rem; }
+        .notification-btn { color: var(--text-secondary); background: none; border: none; font-size: 1.2rem; position: relative; padding: 0.3rem 0.5rem; transition: color 0.2s ease; }
+        .notification-btn:hover { color: var(--text-primary); }
+        .notification-btn .badge {
+            position: absolute; top: 0; right: 0; font-size: 0.6rem; padding: 0.2em 0.4em;
+            transform: translate(40%, -40%); display: none; /* Hide badge by default */
         }
-        .details-card h1 { text-align: center; font-weight: 700; margin-bottom: 1rem; font-size: 2rem; color: var(--text-primary); }
-        .details-card .subtitle { text-align: center; color: var(--text-secondary); margin-bottom: 2.5rem; font-size: 0.95rem; }
-        .section-heading {
-            color: var(--accent) !important; font-weight: 600; font-size: 1.1rem; border-bottom: 1px solid var(--border-light);
-            padding-bottom: 0.4rem; margin-bottom: 1.5rem; display: block; width: 100%; opacity: 1 !important;
-        }
-        .form-label { font-weight: 500; color: var(--text-secondary); margin-bottom: 0.6rem; font-size: 0.9rem; }
-        .form-control, .form-select {
-            background-color: var(--input-bg); border: 1px solid var(--border-light); color: var(--text-primary);
-            border-radius: 0.5rem; padding: 0.8rem 1rem; font-size: 0.95rem; transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-        .form-control:focus, .form-select:focus {
-            background-color: #333; border-color: var(--accent); box-shadow: 0 0 0 0.25rem rgba(var(--accent-rgb), 0.3);
-            outline: none; color: var(--text-primary);
-        }
-        .form-control::placeholder { color: var(--text-secondary); opacity: 0.6; }
-        .form-control[type="file"] { padding: 0.7rem 1rem; line-height: 1.5; }
-        .form-control[type="file"]::file-selector-button {
-             background: var(--accent); color: white; border: none; padding: 0.7rem 1rem; margin-inline-start: -1rem; margin-inline-end: 1rem;
-             border-top-left-radius: calc(0.5rem - 1px); border-bottom-left-radius: calc(0.5rem - 1px); cursor: pointer;
-             transition: background-color 0.2s ease; font-weight: 500; font-size: 0.9rem; height: calc(1.5em + 1.4rem + 2px);
-             display: inline-flex; align-items: center;
-         }
-        .form-control[type="file"]::file-selector-button:hover { background: var(--accent-hover); }
-        textarea.form-control { min-height: 120px; }
-        .practice-area-group {
-             background-color: rgba(10, 10, 10, 0.5); /* Adjusted alpha */ border: 1px solid var(--border-light); border-radius: 0.6rem;
-             padding: 1.5rem; margin-top: 0.5rem; max-height: 250px; overflow-y: auto;
-        }
-        .form-check-label { font-size: 0.9rem; color: var(--text-primary); margin-left: 0.3rem; }
-        .form-check-input { border-color: var(--border-light); background-color: var(--input-bg); }
-        .form-check-input:checked { background-color: var(--accent); border-color: var(--accent); }
-        .form-check-input:focus { box-shadow: 0 0 0 0.25rem rgba(var(--accent-rgb), 0.3); }
-        .btn-submit {
-            background: var(--gradient-button); color: white; border: none; padding: 0.9rem 2.5rem; border-radius: 50px;
-            font-weight: 600; font-size: 1rem; width: 100%; margin-top: 2rem; transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .btn-submit:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(var(--accent-rgb), 0.25); color: white; }
-        .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; background: var(--secondary-bg); }
-        /* Error message styling */
-        .form-message-area { padding: 10px 15px; border-radius: 6px; margin-top: 1rem; font-size: 0.9rem; text-align: center; display: none; }
-        .form-message-area.success { background-color: rgba(76, 175, 80, 0.2); color: #4caf50; border: 1px solid rgba(76, 175, 80, 0.4); }
-        .form-message-area.error { background-color: rgba(207, 102, 121, 0.15); color: #cf6679; border: 1px solid rgba(207, 102, 121, 0.4); }
+        .notification-btn .badge.show { display: inline-block; } /* Class to show badge */
 
-        @media (max-width: 768px) { .details-card { padding: 2rem 1.5rem; margin: 2rem auto; } .details-card h1 { font-size: 1.8rem; } .section-heading { font-size: 1rem; } }
-        @media (max-width: 576px) { .details-card { padding: 1.5rem 1rem; margin: 1.5rem auto; } .details-card h1 { font-size: 1.6rem; } .section-heading { font-size: 1rem; } .form-label { font-size: 0.85rem; } .form-control, .form-select { font-size: 0.9rem; padding: 0.7rem 0.9rem; } .btn-submit { padding: 0.8rem 2rem; font-size: 0.95rem;} .practice-area-group { padding: 1rem; } }
+        /* --- Dashboard Area Styling --- */
+        .dashboard-container {
+            flex-grow: 1; padding: 2rem 1.5rem; display: grid;
+            grid-template-columns: 1fr 2fr 1.5fr; grid-template-rows: auto auto 1fr auto;
+            gap: 1.5rem;
+            grid-template-areas:
+                "profile lawyerinfo notifications"
+                "profile currentcases pastcases"
+                "profile completedcases ratings"
+                "profile winpercentage winpercentage";
+            max-width: 1200px; margin: 2rem auto;
+        }
+        /* Grid Area Assignments */
+        .profile-section { grid-area: profile; }
+        .lawyer-info-section { grid-area: lawyerinfo; }
+        .notifications-section { grid-area: notifications; text-align: left; }
+        .current-cases-section { grid-area: currentcases; }
+        .past-cases-section { grid-area: pastcases; }
+        .completed-cases-section { grid-area: completedcases; }
+        .ratings-reviews-section { grid-area: ratings; }
+        .win-percentage-section { grid-area: winpercentage; }
+
+        /* Component Styling */
+        .dashboard-card {
+            background-color: var(--card-bg); padding: 1.5rem; border-radius: var(--bs-border-radius-lg);
+            border: 1px solid var(--border-light); height: 100%; display: flex; flex-direction: column;
+        }
+         .dashboard-card h5 { font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.8rem; border-bottom: 1px solid var(--border-light); padding-bottom: 0.6rem; flex-shrink: 0; }
+         .dashboard-card h5 i { color: var(--accent); margin-right: 0.5rem; font-size: 1rem; }
+         .dashboard-card p, .dashboard-card .card-text { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.5rem; flex-grow: 1; }
+         .dashboard-card .value-display { font-size: 1.8rem; font-weight: 700; color: var(--text-primary); margin-top: auto; text-align: center; flex-shrink: 0; }
+          .dashboard-card .value-display.small { font-size: 1.4rem; }
+          .loading-placeholder { color: var(--text-secondary); font-style: italic; font-size: 0.9em; } /* For loading text */
+
+        /* Profile Specific */
+        .profile-section .profile-pic-placeholder { width: 120px; height: 120px; background-color: #333; border-radius: 0.8rem; margin: 0 auto 1.5rem auto; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 2px solid var(--border-light); flex-shrink: 0; }
+        .profile-section .profile-pic-placeholder img { width: 100%; height: 100%; object-fit: cover; }
+        .profile-section .profile-pic-placeholder.default-bg { background: linear-gradient(to bottom, #a0d2eb 50%, #87c38f 50%); position: relative; }
+        .profile-section .profile-pic-placeholder.default-bg::before { content: '\f0c2'; font-family: 'Font Awesome 6 Free'; font-weight: 900; color: white; font-size: 2.5rem; position: absolute; top: 20%; left: 50%; transform: translateX(-50%); }
+        .profile-section .lawyer-name { font-size: 1.4rem; font-weight: 600; color: var(--text-primary); text-align: center; margin-bottom: 0.5rem; }
+        .profile-section .lawyer-specialty { font-size: 0.95rem; color: var(--text-secondary); text-align: center; margin-bottom: 1.5rem; }
+        .profile-section .btn-profile { background: var(--accent); border-color: var(--accent); color: white; font-weight: 500; padding: 0.5rem 1rem; width: 100%; margin-top: auto; flex-shrink: 0; }
+        .profile-section .btn-profile:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+
+        /* Case Section Specific */
+        .case-link { display: block; color: var(--accent); text-decoration: none; font-weight: 500; font-size: 0.9rem; margin-top: auto; transition: color 0.2s ease; flex-shrink: 0; }
+        .case-link:hover { color: var(--accent-hover); text-decoration: underline; }
+
+        /* Ratings Specific */
+        .rating-stars { color: #FFC107; font-size: 1.3rem; margin-bottom: 0.5rem; text-align: center; flex-shrink: 0; }
+        .rating-count { font-size: 0.85rem; color: var(--text-secondary); text-align: center; margin-bottom: 1rem; flex-shrink: 0; }
+
+        /* Notifications Card Specific Styling */
+        .notifications-section.dashboard-card { overflow-y: auto; max-height: 400px; }
+        .notification-list { padding-left: 0; list-style: none; margin-bottom: 0 !important; flex-grow: 1; overflow-y: auto; }
+        .notification-list li { padding: 0.75rem 0.2rem 0.75rem 0; border-bottom: 1px solid var(--border-light); }
+        .notification-list li:last-child { border-bottom: none; padding-bottom: 0; }
+        .notification-item-text { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.3rem !important; line-height: 1.4; }
+        .notification-list .timestamp { display: block; font-size: 0.75rem; color: #888; margin-top: 0.2rem; } /* Style for timestamp */
+        .chat-link { color: var(--accent); text-decoration: none; font-weight: 500; font-size: 0.8rem; transition: color 0.2s ease; display: inline-block; margin-top: 0.2rem;}
+        .chat-link i { font-size: 0.75rem; }
+        .chat-link:hover { color: var(--accent-hover); text-decoration: underline; }
+        .no-notifications { padding: 1rem; text-align: center; color: var(--text-secondary); font-style: italic; }
+
+        /* Notification Bar Styling */
+        .notification-bar { background-color: var(--accent); color: white; padding: 0.75rem 1.5rem; margin-top: 2rem; width: 100%; flex-shrink: 0; }
+        .notification-bar .container-fluid { max-width: 1200px; margin-left: auto; margin-right: auto; padding-left: 0; padding-right: 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+        .notification-bar .notification-text { font-size: 0.9rem; font-weight: 500; }
+        .notification-bar .chat-now-btn { background-color: white; color: var(--accent); border: none; font-weight: 600; padding: 0.4rem 1rem; border-radius: 0.5rem; transition: background-color 0.2s ease, color 0.2s ease; }
+        .notification-bar .chat-now-btn:hover { background-color: #e9ecef; color: var(--accent-hover); }
+
+        /* Footer Styling */
+        footer { background-color: #000; padding: 1.5rem 0; border-top: 1px solid var(--border-light); text-align: center; width: 100%; flex-shrink: 0; }
+        .footer-text { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0; }
+
+        /* Responsive Adjustments */
+        @media (max-width: 992px) {
+            .dashboard-container { grid-template-columns: 1fr 1.5fr; grid-template-rows: auto auto auto auto auto auto;
+                grid-template-areas: "profile notifications" "lawyerinfo ratings" "currentcases pastcases" "completedcases completedcases" "winpercentage winpercentage";
+                 padding: 1.5rem 1rem; gap: 1rem; margin-bottom: 1rem; }
+            .notifications-section.dashboard-card { max-height: 300px; } }
+        @media (max-width: 768px) {
+            .dashboard-container { grid-template-columns: 1fr; grid-template-rows: auto;
+                grid-template-areas: "profile" "notifications" "lawyerinfo" "ratings" "currentcases" "pastcases" "completedcases" "winpercentage";
+                 padding: 1rem 0.8rem; margin: 1rem auto 1rem auto; }
+            .profile-section .profile-pic-placeholder { width: 100px; height: 100px; }
+            .dashboard-card { padding: 1rem; } .dashboard-card h5 { font-size: 1rem; } .dashboard-card .value-display { font-size: 1.5rem; }
+            .navbar-actions { gap: 0.5rem; } .navbar-brand.logo { font-size: 1.2rem;} .logo-icon { font-size: 1.3rem; }
+            .notifications-section.dashboard-card { max-height: 250px; }
+            .notification-bar .container-fluid { flex-direction: column; text-align: center; gap: 0.75rem; }
+            .notification-bar { padding: 1rem; margin-top: 1.5rem; } .notification-bar .chat-now-btn { width: 80%; max-width: 250px; } }
+
     </style>
 </head>
-
-<script type="text/javascript" 
-  src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit">
-</script>
 <body>
+
     <!-- Header -->
     <nav class="navbar sticky-top">
-        <div class="container">
-            <a class="navbar-brand logo" href="#"> <!-- Maybe link to lawyer_home.html -->
+        <div class="container-fluid">
+            <a class="navbar-brand logo" href="lawyer_home.html">
                 <i class="fas fa-balance-scale logo-icon"></i>
                 Legal Assist
             </a>
-            <!-- Maybe add logout button here if needed -->
+            <div class="navbar-actions">
+                 <!-- Notification Button/Area -->
+                 <button class="notification-btn" id="notification-bell-btn" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Notifications">
+                     <i class="fas fa-bell"></i>
+                     <!-- Badge will be updated by JS -->
+                     <span id="notification-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                         <!-- Count goes here -->
+                         <span class="visually-hidden">unread notifications</span>
+                     </span>
+                 </button>
+                <!-- Sign Out Button -->
+                <button class="btn btn-sm btn-outline-light" id="logout-button">
+                    <i class="fas fa-sign-out-alt me-1"></i>
+                    Sign Out
+                </button>
+            </div>
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <div class="container">
-        <div class="details-card">
-            <h1>Complete Your Lawyer Profile</h1>
-            <p class="subtitle">Provide your details to get listed and start connecting with clients.</p>
+    <!-- Main Dashboard Content -->
+    <main class="dashboard-container" id="dashboard-main">
 
-             <!-- ** Remove method/action/enctype - handled by JS ** -->
-            <form id="lawyerDetailsForm">
+        <!-- Profile Section (Left) -->
+        <div class="profile-section dashboard-card">
+            <div class="profile-pic-placeholder default-bg" id="profile-pic-container">
+                <!-- <img src="..." alt="Profile Picture" id="profile-pic"> -->
+                <!-- Default BG shown if no image loaded -->
+            </div>
+            <h4 class="lawyer-name" id="lawyer-name-display">Loading...</h4>
+            <p class="lawyer-specialty" id="lawyer-specialty-display">Loading...</p>
+            <p class="card-text" id="lawyer-bio-display">
+                <span class="loading-placeholder">Loading bio...</span>
+            </p>
+            <a href="lawyer_info.html" class="btn btn-profile">Edit Profile</a> <!-- Link to profile edit page -->
+        </div>
 
-                 <h5 class="section-heading mt-4">Basic Information</h5>
-                 <div class="mb-3">
-                    <label for="fullName" class="form-label">Full Name</label>
-                    <input type="text" class="form-control" id="fullName" name="fullName" placeholder="e.g., Jane Doe" required>
-                 </div>
-                 <div class="mb-3">
-                    <label for="phone" class="form-label">Contact Phone</label>
-                    <input type="tel" class="form-control" id="phone" name="phone" placeholder="e.g., +1 555-123-4567" required>
-                 </div>
-                 <div class="mb-4">
-                    <label for="bio" class="form-label">Short Bio / Professional Summary</label>
-                    <textarea class="form-control" id="bio" name="bio" rows="4" placeholder="Briefly describe your experience and focus..." required></textarea>
-                 </div>
+        <!-- Lawyer Info Section -->
+        <div class="lawyer-info-section dashboard-card">
+             <h5><i class="fas fa-info-circle"></i>Lawyer Info</h5>
+             <p><strong>Bar Number:</strong> <span id="bar-number-display">Loading...</span></p>
+             <p><strong>Location:</strong> <span id="location-display">Loading...</span></p>
+             <p><strong>Contact:</strong> <span id="contact-display">Loading...</span></p>
+             <p><strong>Status:</strong> <span id="status-display">Accepting New Cases</span></p> <!-- Example static/dynamic -->
+        </div>
 
-                 <hr class="my-4 border-light opacity-50">
+         <!-- Notifications Section -->
+         <div class="notifications-section dashboard-card">
+            <h5><i class="fas fa-bell"></i>Notifications</h5>
+            <ul class="list-unstyled notification-list mb-0" id="notification-list-ul">
+                <!-- Notifications will be populated by JS -->
+                 <li class="no-notifications" id="no-notifications-li">
+                     <span class="loading-placeholder">Loading notifications...</span>
+                 </li>
+            </ul>
+         </div>
 
-                 <h5 class="section-heading">Professional Experience</h5>
-                 <div class="row g-3 mb-3">
-                    <div class="col-md-8">
-                        <label for="barState" class="form-label">Bar Admission State(s)</label>
-                        <input type="text" class="form-control" id="barState" name="barState" placeholder="e.g., California, New York" required>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="barNumber" class="form-label">Bar License Number</label>
-                        <input type="text" class="form-control" id="barNumber" name="barNumber" placeholder="e.g., 123456" required>
-                     </div>
-                 </div>
-                 <div class="row g-3 mb-4">
-                     <div class="col-md-6">
-                        <label for="admissionYear" class="form-label">Year of Bar Admission</label>
-                        <input type="number" class="form-control" id="admissionYear" name="admissionYear" placeholder="e.g., 2010" min="1950" max="2025" required>
-                    </div>
-                     <div class="col-md-6">
-                        <label for="experienceYears" class="form-label">Years of Practice Experience</label>
-                        <input type="number" class="form-control" id="experienceYears" name="experienceYears" placeholder="e.g., 10" min="0" max="70" required>
-                    </div>
-                 </div>
+        <!-- Current Cases -->
+        <div class="current-cases-section dashboard-card">
+            <h5><i class="fas fa-folder-open"></i>Current Cases</h5>
+            <p class="card-text">Overview of ongoing cases.</p>
+            <div class="value-display small" id="current-cases-count">0</div> <!-- Default/Loading -->
+            <a href="#" class="case-link">View Current Cases</a> <!-- Placeholder link -->
+        </div>
 
-                 <hr class="my-4 border-light opacity-50">
+        <!-- Past Cases -->
+        <div class="past-cases-section dashboard-card">
+            <h5><i class="fas fa-history"></i>Past Cases</h5>
+             <p class="card-text">Summary of recently closed cases.</p>
+             <div class="value-display small" id="past-cases-count">0</div> <!-- Default/Loading -->
+             <a href="#" class="case-link">View Past Cases</a> <!-- Placeholder link -->
+        </div>
 
-                 <h5 class="section-heading">Education</h5>
-                 <div class="row g-3 mb-3">
-                     <div class="col-md-8">
-                        <label for="lawSchool" class="form-label">Law School Attended</label>
-                        <input type="text" class="form-control" id="lawSchool" name="lawSchool" placeholder="e.g., Harvard Law School" required>
-                    </div>
-                     <div class="col-md-4">
-                        <label for="gradYear" class="form-label">Graduation Year</label>
-                        <input type="number" class="form-control" id="gradYear" name="gradYear" placeholder="e.g., 2009" min="1950" max="2025" required>
-                    </div>
-                 </div>
-                 <div class="mb-4">
-                     <!-- File upload needs separate Firebase Storage implementation -->
-                    <label for="degreePdf" class="form-label">Upload Law Degree (PDF) <span class="text-secondary">(Optional - Verification Feature)</span></label>
-                    <input class="form-control" type="file" id="degreePdf" name="degreePdf" accept=".pdf">
-                    <div class="form-text text-secondary mt-1">Max file size: 5MB. Verification handled separately.</div>
-                 </div>
+        <!-- Completed Cases -->
+        <div class="completed-cases-section dashboard-card">
+            <h5><i class="fas fa-check-circle"></i>Completed Cases</h5>
+            <p class="card-text">Total successfully completed cases.</p>
+             <div class="value-display small" id="completed-cases-count">0</div> <!-- Default/Loading -->
+             <a href="#" class="case-link">View Completed</a> <!-- Placeholder link -->
+        </div>
 
-                 <hr class="my-4 border-light opacity-50">
+        <!-- Rating & Reviews -->
+        <div class="ratings-reviews-section dashboard-card">
+             <h5><i class="fas fa-star"></i>Rating & Reviews</h5>
+             <div class="rating-stars" id="rating-stars-display">
+                 <!-- Stars will be generated by JS -->
+                 <span class="loading-placeholder">Loading rating...</span>
+             </div>
+             <p class="rating-count" id="rating-count-display">(Based on 0 reviews)</p>
+             <a href="#" class="case-link">Manage Reviews</a> <!-- Placeholder link -->
+        </div>
 
-                 <h5 class="section-heading">Practice Areas</h5>
-                 <label class="form-label">Select your primary areas of expertise (select all that apply):</label>
-                 <div class="practice-area-group mb-4">
-                     <div class="row">
-                          <div class="col-md-6 col-lg-4">
-                             <div class="form-check mb-2">
-                                 <input class="form-check-input" type="checkbox" value="Family Law" id="areaFamily" name="practiceAreas"> <!-- Changed name -->
-                                 <label class="form-check-label" for="areaFamily">Family Law</label>
-                             </div>
-                             <div class="form-check mb-2">
-                                 <input class="form-check-input" type="checkbox" value="Business Law" id="areaBusiness" name="practiceAreas">
-                                 <label class="form-check-label" for="areaBusiness">Business Law</label>
-                             </div>
-                             <div class="form-check mb-2">
-                                 <input class="form-check-input" type="checkbox" value="Real Estate" id="areaRealEstate" name="practiceAreas">
-                                 <label class="form-check-label" for="areaRealEstate">Real Estate</label>
-                             </div>
-                         </div>
-                          <div class="col-md-6 col-lg-4">
-                             <div class="form-check mb-2">
-                                 <input class="form-check-input" type="checkbox" value="Criminal Defense" id="areaCriminal" name="practiceAreas">
-                                 <label class="form-check-label" for="areaCriminal">Criminal Defense</label>
-                             </div>
-                             <div class="form-check mb-2">
-                                 <input class="form-check-input" type="checkbox" value="Employment Law" id="areaEmployment" name="practiceAreas">
-                                 <label class="form-check-label" for="areaEmployment">Employment Law</label>
-                             </div>
-                             <div class="form-check mb-2">
-                                <input class="form-check-input" type="checkbox" value="Personal Injury" id="areaPI" name="practiceAreas">
-                                <label class="form-check-label" for="areaPI">Personal Injury</label>
-                             </div>
-                         </div>
-                         <div class="col-md-6 col-lg-4">
-                             <div class="form-check mb-2">
-                                 <input class="form-check-input" type="checkbox" value="Intellectual Property" id="areaIP" name="practiceAreas">
-                                 <label class="form-check-label" for="areaIP">Intellectual Property</label>
-                             </div>
-                             <div class="form-check mb-2">
-                                 <input class="form-check-input" type="checkbox" value="Estate Planning" id="areaEstate" name="practiceAreas">
-                                 <label class="form-check-label" for="areaEstate">Estate Planning</label>
-                             </div>
-                             <div class="form-check mb-2">
-                                <input class="form-check-input" type="checkbox" value="Immigration Law" id="areaImmigration" name="practiceAreas">
-                                <label class="form-check-label" for="areaImmigration">Immigration Law</label>
-                             </div>
-                         </div>
-                     </div>
-                 </div>
+        <!-- Win Percentage -->
+        <div class="win-percentage-section dashboard-card">
+             <h5><i class="fas fa-percentage"></i>Win Percentage</h5>
+             <p class="card-text">Based on reported outcomes.</p>
+             <div class="value-display" id="win-percentage-display">N/A</div> <!-- Default/Loading -->
+        </div>
 
-                 <!-- Submission -->
-                 <!-- Added a general error message area -->
-                 <div id="form-message" class="form-message-area"></div>
-                 <button type="submit" class="btn btn-submit" id="submitBtn">
-                     Save Profile & Continue
-                 </button>
+    </main> <!-- End Dashboard Container -->
 
-            </form>
+    <!-- Notification/Chat Bar -->
+    <div class="notification-bar">
+        <div class="container-fluid">
+            <span class="notification-text">
+                <i class="fas fa-headset me-2"></i> Have questions about your account or need support?
+            </span>
+            <button class="btn btn-sm chat-now-btn">
+                <i class="fas fa-comments me-1"></i> Chat Now
+            </button>
         </div>
     </div>
 
-    <!-- *** ADD FIREBASE SDKs *** -->
+    <!-- Footer -->
+    <footer>
+        <div class="container text-center">
+            <p class="footer-text mb-0">© 2025 LegalAssist Hub. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore-compat.js"></script>
-    <!-- Add Storage SDK later when implementing file upload -->
     <!-- <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-storage-compat.js"></script> -->
 
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
         // --- Firebase Config ---
         const firebaseConfig = {
-            apiKey: "AIzaSyAhjxwCro-f7u68H3fEJOkc5z9PsukEpNo", // Replace
+             apiKey: "AIzaSyAhjxwCro-f7u68H3fEJOkc5z9PsukEpNo", // Replace
             authDomain: "legal-assistance-5.firebaseapp.com", // Replace
             projectId: "legal-assistance-5",                // Replace
             storageBucket: "legal-assistance-5.firebasestorage.app", // Replace
@@ -272,7 +306,7 @@
         };
 
         // --- Initialize Firebase ---
-        let app, auth, db; // Declare in wider scope
+        let app, auth, db;
         try {
             if (!firebase.apps.length) {
                 app = firebase.initializeApp(firebaseConfig);
@@ -281,156 +315,280 @@
             }
             auth = firebase.auth();
             db = firebase.firestore();
-            console.log("Firebase Initialized on lawyer_info.html");
+            console.log("Firebase Initialized on lawyer dashboard.");
         } catch (e) {
             console.error("Firebase initialization error:", e);
-            alert("Error initializing application. Cannot save profile.");
-            // Optionally disable the form here
+            alert("Error initializing application. Dashboard may not load correctly.");
+            // Optionally hide dashboard or show error message
+             document.getElementById('dashboard-main').innerHTML = '<p class="text-danger text-center p-5">Failed to initialize. Please try again later.</p>';
         }
 
         // --- Get Elements ---
-        const form = document.getElementById('lawyerDetailsForm');
-        const submitBtn = document.getElementById('submitBtn');
-        const formMessage = document.getElementById('form-message');
-        // Input fields
-        const fullNameInput = document.getElementById('fullName');
-        const phoneInput = document.getElementById('phone');
-        const bioInput = document.getElementById('bio');
-        const barStateInput = document.getElementById('barState');
-        const barNumberInput = document.getElementById('barNumber');
-        const admissionYearInput = document.getElementById('admissionYear');
-        const experienceYearsInput = document.getElementById('experienceYears');
-        const lawSchoolInput = document.getElementById('lawSchool');
-        const gradYearInput = document.getElementById('gradYear');
-        const degreePdfInput = document.getElementById('degreePdf'); // For file handling later
-        const practiceAreaCheckboxes = document.querySelectorAll('input[name="practiceAreas"]:checked'); // Select only checked ones later
+        const logoutButton = document.getElementById('logout-button');
+        const lawyerNameDisplay = document.getElementById('lawyer-name-display');
+        const lawyerSpecialtyDisplay = document.getElementById('lawyer-specialty-display');
+        const lawyerBioDisplay = document.getElementById('lawyer-bio-display');
+        const profilePicContainer = document.getElementById('profile-pic-container');
+        // Add IDs for other elements you want to populate
+        const barNumberDisplay = document.getElementById('bar-number-display');
+        const locationDisplay = document.getElementById('location-display'); // Assuming you store location
+        const contactDisplay = document.getElementById('contact-display'); // Assuming you store email/phone
+        const currentCasesCount = document.getElementById('current-cases-count');
+        const pastCasesCount = document.getElementById('past-cases-count');
+        const completedCasesCount = document.getElementById('completed-cases-count');
+        const ratingStarsDisplay = document.getElementById('rating-stars-display');
+        const ratingCountDisplay = document.getElementById('rating-count-display');
+        const winPercentageDisplay = document.getElementById('win-percentage-display');
+        const notificationBadge = document.getElementById('notification-badge');
+        const notificationListUl = document.getElementById('notification-list-ul');
+        const noNotificationsLi = document.getElementById('no-notifications-li');
 
-        let currentUser = null; // Variable to store the logged-in user info
 
-        // --- Authentication Check ---
+        let currentUser = null; // Store logged-in user info
+
+        // --- Helper Functions ---
+        function formatTimestamp(timestamp) {
+            if (!timestamp || !timestamp.toDate) return 'Just now'; // Handle null or invalid timestamps
+            const date = timestamp.toDate();
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.round(diffMs / 60000); // Difference in minutes
+
+            if (diffMins < 1) return 'Just now';
+            if (diffMins < 60) return `${diffMins}m ago`;
+            if (diffMins < 1440) return `${Math.floor(diffMins / 60)}h ago`; // Hours
+            // Otherwise, return date in a simple format
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+
+        // --- Authentication Check & Data Fetching ---
         auth.onAuthStateChanged(user => {
             if (user) {
-                // User is signed in.
                 currentUser = user;
-                console.log("User is logged in:", currentUser.uid);
-                if (submitBtn) submitBtn.disabled = false; // Enable submit button only if logged in
+                console.log("Lawyer dashboard: User is logged in:", currentUser.uid);
+
+                // Fetch data once user is confirmed
+                fetchLawyerProfile(currentUser.uid);
+                fetchDashboardMetrics(currentUser.uid); // Fetch counts etc.
+                listenForNotifications(currentUser.uid); // Start listening for notifications
+
             } else {
-                // User is signed out.
                 currentUser = null;
-                console.log("User is not logged in. Redirecting...");
-                 // Disable submit button and show message
-                 if (submitBtn) submitBtn.disabled = true;
-                 if (formMessage) {
-                     formMessage.textContent = 'You must be logged in to save your profile. Redirecting...';
-                     formMessage.className = 'form-message-area error'; // Use classList for consistency
-                     formMessage.style.display = 'block';
-                 }
-                 // Redirect to login page after a short delay
-                 setTimeout(() => {
-                     window.location.href = 'lawyer_login.html'; // Or your main login page
-                 }, 2500);
+                console.log("Lawyer dashboard: User is not logged in. Redirecting...");
+                window.location.href = 'lawyer_login.html'; // Redirect to lawyer login
             }
         });
 
-        // --- Form Submission Handler ---
-        if (form && submitBtn) {
-            form.addEventListener('submit', async (event) => {
-                event.preventDefault(); // Prevent default form submission
+        // --- Fetch Lawyer Profile Data ---
+        async function fetchLawyerProfile(userId) {
+            if (!db || !userId) return;
+            const docRef = db.collection('lawyers').doc(userId);
+            try {
+                const docSnap = await docRef.get();
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    console.log("Lawyer Profile Data:", data);
 
-                // Ensure user is still logged in before proceeding
-                if (!currentUser) {
-                    showFormMessage('Error: You are not logged in.', 'error');
-                    return;
+                    // Populate profile card
+                    lawyerNameDisplay.textContent = data.fullName || 'N/A';
+                    // Combine practice areas for specialty display (example)
+                    lawyerSpecialtyDisplay.textContent = data.practiceAreas ? data.practiceAreas.join(', ') : 'Specialist';
+                    lawyerBioDisplay.textContent = data.bio || 'No bio provided.';
+
+                    // Populate lawyer info card
+                    barNumberDisplay.textContent = data.barNumber || 'N/A';
+                    locationDisplay.textContent = data.barState || 'N/A'; // Using barState as location for now
+                    contactDisplay.textContent = data.email || data.phone || 'N/A'; // Use stored email or phone
+
+                    // TODO: Handle profile picture (fetch URL from data.profilePicUrl if available)
+                    // if(data.profilePicUrl) {
+                    //     profilePicContainer.innerHTML = `<img src="${data.profilePicUrl}" alt="Profile Picture" id="profile-pic">`;
+                    // } else {
+                    //     profilePicContainer.classList.add('default-bg'); // Keep default if no pic
+                    // }
+
+                } else {
+                    console.log("No profile data found for this lawyer!");
+                    // Redirect to profile completion?
+                    window.location.href = 'lawyer_info.html'; // Redirect to complete profile page
                 }
-
-                // Disable button and show loading state
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
-                hideFormMessage(); // Clear previous messages
-
-                // --- Gather Form Data ---
-                const selectedPracticeAreas = [];
-                document.querySelectorAll('input[name="practiceAreas"]:checked').forEach((checkbox) => {
-                    selectedPracticeAreas.push(checkbox.value);
-                });
-
-                const lawyerData = {
-                    // Get values from input elements
-                    fullName: fullNameInput.value.trim(),
-                    phone: phoneInput.value.trim(),
-                    bio: bioInput.value.trim(),
-                    barState: barStateInput.value.trim(),
-                    barNumber: barNumberInput.value.trim(),
-                    admissionYear: parseInt(admissionYearInput.value) || null, // Convert to number or null
-                    experienceYears: parseInt(experienceYearsInput.value) || null, // Convert to number or null
-                    lawSchool: lawSchoolInput.value.trim(),
-                    gradYear: parseInt(gradYearInput.value) || null, // Convert to number or null
-                    practiceAreas: selectedPracticeAreas, // Array of selected values
-                    profileCompleted: true, // Flag that they finished this step
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp() // Timestamp update
-                    // Add placeholders or handle file upload separately
-                    // degreePdfUrl: null // Will be updated after successful upload
-                };
-
-                // --- TODO: Handle File Upload (Separate Step using Firebase Storage) ---
-                // const file = degreePdfInput.files[0];
-                // if (file) {
-                //     console.log("File selected:", file.name);
-                //     // Here you would:
-                //     // 1. Get Firebase Storage reference (e.g., storage().ref(`degrees/${currentUser.uid}/${file.name}`))
-                //     // 2. Upload the file using uploadBytes() or uploadBytesResumable()
-                //     // 3. Get the download URL using getDownloadURL() AFTER upload completes
-                //     // 4. Add the download URL to lawyerData before saving to Firestore
-                // } else {
-                //     console.log("No degree file selected.");
-                // }
-                console.warn("PDF File upload not implemented yet.");
-
-
-                // --- Save Data to Firestore ---
-                const lawyerCollection = "lawyers"; // Target collection
-                const docRef = db.collection(lawyerCollection).doc(currentUser.uid);
-
-                try {
-                    // Use set with merge:true to update existing doc or create if missing
-                    await docRef.set(lawyerData, { merge: true });
-
-                    console.log('Profile data saved successfully for UID:', currentUser.uid);
-                    showFormMessage('Profile saved successfully! Redirecting...', 'success');
-
-                    // Redirect to lawyer dashboard after a delay
-                    setTimeout(() => {
-                        window.location.href = 'lawyer_home.html';
-                    }, 1500);
-
-                } catch (error) {
-                    console.error('Error saving lawyer profile data:', error);
-                    showFormMessage('Error: Could not save profile. Please try again.', 'error');
-                    // Re-enable button on error
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = 'Save Profile & Continue';
-                }
-            });
-        } else {
-            console.error("Form or Submit Button not found!");
+            } catch (error) {
+                console.error("Error fetching lawyer profile:", error);
+                lawyerNameDisplay.textContent = 'Error loading';
+                lawyerSpecialtyDisplay.textContent = '';
+                lawyerBioDisplay.textContent = 'Could not load profile data.';
+            }
         }
 
-         // Helper to show/hide form messages
-         function showFormMessage(message, type = 'error') {
-             if (formMessage) {
-                 formMessage.textContent = message;
-                 formMessage.className = `form-message-area ${type}`; // Set class based on type
-                 formMessage.style.display = 'block';
-             }
-         }
-         function hideFormMessage() {
-             if (formMessage) {
-                 formMessage.textContent = '';
-                 formMessage.style.display = 'none';
-                 formMessage.className = 'form-message-area'; // Reset class
-             }
-         }
+        // --- Fetch Dashboard Metrics (Example - Needs actual data source) ---
+        async function fetchDashboardMetrics(userId) {
+            // !!! Placeholder - Replace with actual logic !!!
+            // This might involve querying 'cases' collection related to the lawyer,
+            // or reading pre-calculated summary data from the lawyer's document.
+            try {
+                // Example: Fetch summary data directly from lawyer doc (if stored there)
+                // const lawyerDoc = await db.collection('lawyers').doc(userId).get();
+                // if (lawyerDoc.exists()) {
+                //     const data = lawyerDoc.data();
+                //     currentCasesCount.textContent = data.currentCasesCount || 0;
+                //     pastCasesCount.textContent = data.pastCasesCount || 0;
+                //     completedCasesCount.textContent = data.completedCasesCount || 0;
+                //     winPercentageDisplay.textContent = data.winPercentage ? `${data.winPercentage}%` : 'N/A';
+                //     // Update ratings based on data.averageRating, data.ratingCount
+                //     updateRatingDisplay(data.averageRating, data.ratingCount);
+                // } else {
+                //     console.warn("Lawyer document not found for metrics.");
+                // }
+
+                 // Using static values as placeholders for now:
+                 console.warn("Using placeholder dashboard metrics.");
+                 currentCasesCount.textContent = 5;
+                 pastCasesCount.textContent = 23;
+                 completedCasesCount.textContent = 18;
+                 winPercentageDisplay.textContent = '85%';
+                 updateRatingDisplay(4.5, 15); // Example rating
+
+
+            } catch (error) {
+                console.error("Error fetching dashboard metrics:", error);
+                // Show N/A or 0 on error
+                currentCasesCount.textContent = 'N/A';
+                pastCasesCount.textContent = 'N/A';
+                completedCasesCount.textContent = 'N/A';
+                winPercentageDisplay.textContent = 'N/A';
+                ratingStarsDisplay.innerHTML = '<span class="loading-placeholder">Error</span>';
+                ratingCountDisplay.textContent = '(Error loading reviews)';
+            }
+        }
+
+        // --- Update Rating Display ---
+        function updateRatingDisplay(averageRating, ratingCount) {
+            ratingCount = ratingCount || 0;
+            ratingCountDisplay.textContent = `(Based on ${ratingCount} reviews)`;
+
+            if (averageRating && averageRating > 0) {
+                let starsHtml = '';
+                const fullStars = Math.floor(averageRating);
+                const halfStar = averageRating % 1 >= 0.5;
+                const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+
+                for(let i = 0; i < fullStars; i++) starsHtml += '<i class="fas fa-star"></i>';
+                if(halfStar) starsHtml += '<i class="fas fa-star-half-alt"></i>';
+                for(let i = 0; i < emptyStars; i++) starsHtml += '<i class="far fa-star"></i>'; // Use 'far' for empty
+
+                ratingStarsDisplay.innerHTML = starsHtml;
+            } else {
+                // Show 5 empty stars if no rating
+                ratingStarsDisplay.innerHTML = '<i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i>';
+            }
+        }
+
+
+        // --- Listen for Notifications ---
+        let unsubscribeNotifications = null; // To stop listener later
+        function listenForNotifications(userId) {
+             if (!db || !userId) return;
+             if (unsubscribeNotifications) unsubscribeNotifications(); // Unsubscribe previous listener
+
+            const notificationsRef = db.collection('notifications')
+                                      .where('userId', '==', userId)
+                                      .where('read', '==', false) // Only fetch unread
+                                      .orderBy('timestamp', 'desc')
+                                      .limit(10); // Limit initial load/display
+
+            unsubscribeNotifications = notificationsRef.onSnapshot(snapshot => {
+                const unreadCount = snapshot.size;
+                console.log(`Fetched ${unreadCount} unread notifications.`);
+
+                // Update Badge
+                if (notificationBadge) {
+                    if (unreadCount > 0) {
+                         // Get the first child node (text node) to update count safely
+                         const badgeTextNode = notificationBadge.childNodes[0];
+                         badgeTextNode.nodeValue = unreadCount + " "; // Update count
+                         notificationBadge.classList.add('show');
+                    } else {
+                         notificationBadge.classList.remove('show');
+                    }
+                }
+
+                // Update Notification List
+                if (notificationListUl) {
+                    notificationListUl.innerHTML = ''; // Clear existing list items
+
+                    if (snapshot.empty) {
+                        notificationListUl.innerHTML = '<li class="no-notifications">No new notifications.</li>';
+                    } else {
+                        snapshot.forEach(doc => {
+                            const notification = doc.data();
+                            const li = document.createElement('li');
+
+                            const textP = document.createElement('p');
+                            textP.className = 'notification-item-text mb-1';
+                            textP.textContent = notification.message;
+
+                            const timeSpan = document.createElement('span');
+                            timeSpan.className = 'timestamp';
+                            timeSpan.textContent = formatTimestamp(notification.timestamp);
+
+                            li.appendChild(textP);
+                            li.appendChild(timeSpan);
+
+                            // Optional: Add 'Chat Now' or other action links based on notification.link or type
+                            if (notification.link && notification.link.startsWith('#chat')) { // Example check
+                                 const chatLink = document.createElement('a');
+                                 chatLink.href = notification.link; // Use link from data
+                                 chatLink.className = 'chat-link';
+                                 chatLink.innerHTML = '<i class="fas fa-comments me-1"></i>Chat Now';
+                                 // TODO: Add click listener to mark as read?
+                                 li.appendChild(chatLink);
+                            } else if (notification.link) {
+                                 const actionLink = document.createElement('a');
+                                 actionLink.href = notification.link;
+                                 actionLink.className = 'chat-link'; // Use same style for now
+                                 actionLink.innerHTML = '<i class="fas fa-external-link-alt me-1"></i>View';
+                                 li.appendChild(actionLink);
+                            }
+
+                             // TODO: Add click listener to 'li' or a specific button
+                             // to mark the notification as read in Firestore:
+                             // db.collection('notifications').doc(doc.id).update({ read: true });
+
+                            notificationListUl.appendChild(li);
+                        });
+                    }
+                }
+
+            }, error => {
+                console.error("Error listening for notifications:", error);
+                if (notificationListUl) notificationListUl.innerHTML = '<li class="no-notifications text-danger">Error loading notifications.</li>';
+                if (notificationBadge) notificationBadge.classList.remove('show');
+            });
+        }
+
+
+        // --- Logout Handler ---
+        if (logoutButton) {
+            logoutButton.addEventListener('click', () => {
+                 console.log('Logout initiated...');
+                 if (unsubscribeNotifications) unsubscribeNotifications(); // Stop listener
+                 auth.signOut().then(() => {
+                     console.log('User signed out successfully.');
+                     window.location.href = 'lawyer_login.html'; // Redirect after sign out
+                 }).catch((error) => {
+                     console.error('Sign out error:', error);
+                     alert('Error signing out. Please try again.');
+                 });
+            });
+        }
+
+        // Enable Bootstrap Tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
 
     </script>
+
 </body>
 </html>
