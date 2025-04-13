@@ -25,9 +25,20 @@
             --text-secondary: #a3a3a3;
             --border-light: rgba(255, 255, 255, 0.1);
             --gradient: linear-gradient(135deg, #7E57C2 0%, #673AB7 100%);
-            --bs-border-radius-lg: 1rem; /* Keep consistent radius */
+            --bs-border-radius-lg: 1rem;
+            --bs-primary-rgb: 126, 87, 194;
+            --bs-btn-color: white;
+            --bs-btn-bg: var(--accent);
+            --bs-btn-border-color: var(--accent);
+            --bs-btn-hover-color: white;
+            --bs-btn-hover-bg: var(--accent-hover);
+            --bs-btn-hover-border-color: var(--accent-hover);
+            --bs-btn-active-color: white;
+            --bs-btn-active-bg: var(--accent-hover);
+            --bs-btn-active-border-color: var(--accent-hover);
         }
 
+        html, body { height: 100%; }
         body {
             font-family: 'Inter', sans-serif;
             background: var(--primary-bg);
@@ -37,303 +48,128 @@
             flex-direction: column;
         }
 
-        /* --- Navbar Styling (Keep consistent) --- */
+        /* --- Navbar Styling --- */
         .navbar {
             background: rgba(10, 10, 10, 0.95);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border-light);
-            padding: 0.8rem 1rem; /* Adjusted padding slightly */
-        }
-
-        .navbar-brand.logo {
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            font-size: 1.4rem;
-            color: var(--text-primary);
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            margin-right: auto; /* Push other items to the right */
-        }
-
-        .logo-icon {
-            color: var(--accent);
-            margin-right: 0.6rem;
-            font-size: 1.5rem;
-        }
-
-        .navbar-actions {
-            display: flex;
-            align-items: center;
-            gap: 1rem; /* Space between actions */
-        }
-
-        .notification-btn {
-            color: var(--text-secondary);
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            position: relative; /* For potential badge */
-            padding: 0.3rem 0.5rem;
-            transition: color 0.2s ease;
-        }
-        .notification-btn:hover {
-            color: var(--text-primary);
-        }
-        /* Basic notification badge example */
-        .notification-btn .badge {
-            position: absolute;
+            padding: 0.8rem 1rem;
+            position: sticky;
             top: 0;
-            right: 0;
-            font-size: 0.6rem;
-            padding: 0.2em 0.4em;
-            transform: translate(40%, -40%);
+            z-index: 1030;
+            flex-shrink: 0;
         }
+        .navbar-brand.logo { font-weight: 700; letter-spacing: -0.5px; font-size: 1.4rem; color: var(--text-primary); text-decoration: none; display: inline-flex; align-items: center; margin-right: auto; }
+        .logo-icon { color: var(--accent); margin-right: 0.6rem; font-size: 1.5rem; }
+        .navbar-actions { display: flex; align-items: center; gap: 0.75rem; } /* Reduced gap slightly */
+        .notification-btn { color: var(--text-secondary); background: none; border: none; font-size: 1.2rem; position: relative; padding: 0.3rem 0.5rem; transition: color 0.2s ease; }
+        .notification-btn:hover { color: var(--text-primary); }
+        .notification-btn .badge { position: absolute; top: 0; right: 0; font-size: 0.6rem; padding: 0.2em 0.4em; transform: translate(40%, -40%); display: none; }
+        .notification-btn .badge.show { display: inline-block; }
 
-
-        /* --- Dashboard Area Styling --- */
-        .dashboard-container {
-            flex-grow: 1; /* Takes up remaining vertical space */
-            padding: 2rem 1.5rem; /* Padding around the main content */
-            display: grid;
-            /* Defining grid based loosely on the image structure */
-            grid-template-columns: 1fr 2fr 1.5fr; /* Adjust ratios as needed */
-            grid-template-rows: auto auto 1fr auto; /* Define rows */
-            gap: 1.5rem; /* Spacing between grid items */
+        /* --- Dashboard Area Styling (ADJUSTED GRID) --- */
+         main.dashboard-container {
+            flex-grow: 1; padding: 2rem 1.5rem; display: grid;
+            /* Simplified 2-column layout */
+            grid-template-columns: 1fr 2.5fr; /* Profile column, wider main content column */
+            grid-template-rows: auto auto auto auto auto auto; /* Define rows for stacking */
+            gap: 1.5rem;
             grid-template-areas:
-                "profile lawyerinfo notifications"
-                "profile currentcases pastcases"
-                "profile completedcases ratings"
-                "profile winpercentage winpercentage";
-            max-width: 1200px; /* Max width for the dashboard content */
-            margin: 2rem auto; /* Center the container */
+                "profile lawyerinfo"
+                "profile currentcases"
+                "profile pastcases"
+                "profile completedcases"
+                "profile ratings"
+                "profile winpercentage"; /* Removed notifications area */
+            max-width: 1200px; margin: 2rem auto;
         }
-
-        /* --- Grid Area Assignments --- */
+        /* Grid Area Assignments (Updated) */
         .profile-section { grid-area: profile; }
         .lawyer-info-section { grid-area: lawyerinfo; }
-        .notifications-section { grid-area: notifications; text-align: right; } /* Align content right */
+        /* .notifications-section { grid-area: notifications; } REMOVED */
         .current-cases-section { grid-area: currentcases; }
         .past-cases-section { grid-area: pastcases; }
         .completed-cases-section { grid-area: completedcases; }
         .ratings-reviews-section { grid-area: ratings; }
         .win-percentage-section { grid-area: winpercentage; }
 
-
-        /* --- Component Styling (using existing variables) --- */
-        .dashboard-card {
-            background-color: var(--card-bg);
-            padding: 1.5rem;
-            border-radius: var(--bs-border-radius-lg);
-            border: 1px solid var(--border-light);
-            height: 100%; /* Make cards fill grid cell height */
-            display: flex;
-            flex-direction: column;
-        }
-         .dashboard-card h5 {
-             font-size: 1.1rem;
-             font-weight: 600;
-             color: var(--text-primary);
-             margin-bottom: 0.8rem;
-             border-bottom: 1px solid var(--border-light);
-             padding-bottom: 0.6rem;
-         }
-         .dashboard-card h5 i { /* Icon in heading */
-             color: var(--accent);
-             margin-right: 0.5rem;
-             font-size: 1rem; /* Adjust icon size */
-         }
-
-         .dashboard-card p, .dashboard-card .card-text {
-             font-size: 0.9rem;
-             color: var(--text-secondary);
-             line-height: 1.6;
-             margin-bottom: 0.5rem;
-             flex-grow: 1; /* Allow text to take space */
-         }
-         .dashboard-card .value-display {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-top: auto; /* Push value to bottom if needed */
-            text-align: center;
-         }
-          .dashboard-card .value-display.small {
-             font-size: 1.4rem;
-          }
-
+        /* Component Styling */
+        .dashboard-card { background-color: var(--card-bg); padding: 1.5rem; border-radius: var(--bs-border-radius-lg); border: 1px solid var(--border-light); height: 100%; display: flex; flex-direction: column; }
+         .dashboard-card h5 { font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.8rem; border-bottom: 1px solid var(--border-light); padding-bottom: 0.6rem; flex-shrink: 0; }
+         .dashboard-card h5 i { color: var(--accent); margin-right: 0.5rem; font-size: 1rem; }
+         .dashboard-card p, .dashboard-card .card-text { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.5rem; flex-grow: 1; }
+         .dashboard-card .value-display { font-size: 1.8rem; font-weight: 700; color: var(--text-primary); margin-top: auto; text-align: center; flex-shrink: 0; }
+          .dashboard-card .value-display.small { font-size: 1.4rem; }
 
         /* Profile Specific */
-        .profile-section .profile-pic-placeholder {
-            width: 120px;
-            height: 120px;
-            background-color: #333; /* Placeholder color */
-            border-radius: 0.8rem; /* Match card radius */
-            margin: 0 auto 1.5rem auto; /* Center and add bottom margin */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden; /* For actual image */
-            border: 2px solid var(--border-light);
-        }
-        .profile-section .profile-pic-placeholder img {
-             width: 100%;
-             height: 100%;
-             object-fit: cover;
-        }
-        .profile-pic-placeholder.default-bg {
-            background: linear-gradient(to bottom, #a0d2eb 50%, #87c38f 50%); /* Sky and grass */
-            position: relative;
-        }
-        .profile-pic-placeholder.default-bg::before { /* Cloud */
-             content: '\f0c2'; /* Font Awesome cloud icon */
-             font-family: 'Font Awesome 6 Free';
-             font-weight: 900;
-             color: white;
-             font-size: 2.5rem;
-             position: absolute;
-             top: 20%;
-             left: 50%;
-             transform: translateX(-50%);
-        }
-
-
-        .profile-section .lawyer-name {
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            text-align: center;
-            margin-bottom: 0.5rem;
-        }
-        .profile-section .lawyer-specialty {
-             font-size: 0.95rem;
-             color: var(--text-secondary);
-             text-align: center;
-             margin-bottom: 1.5rem;
-        }
-        .profile-section .btn-profile {
-            background: var(--accent);
-            border-color: var(--accent);
-            color: white;
-            font-weight: 500;
-            padding: 0.5rem 1rem;
-            width: 100%;
-            margin-top: 1rem; /* Space above button */
-            text-decoration: none; /* Remove underline from link button */
-            display: inline-block; /* Allow width */
-            text-align: center; /* Center text */
-        }
-        .profile-section .btn-profile:hover {
-             background: var(--accent-hover);
-             border-color: var(--accent-hover);
-             color: white; /* Keep color on hover */
-        }
+        .profile-section .profile-pic-placeholder { width: 120px; height: 120px; background-color: #333; border-radius: 0.8rem; margin: 0 auto 1.5rem auto; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 2px solid var(--border-light); flex-shrink: 0; position: relative; }
+        .profile-section .profile-pic-placeholder img { display: none; width: 100%; height: 100%; object-fit: cover; }
+        .profile-section .profile-pic-placeholder.default-bg::before { content: '\f0c2'; font-family: 'Font Awesome 6 Free'; font-weight: 900; color: white; font-size: 2.5rem; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.7;}
+        .profile-section .lawyer-name { font-size: 1.4rem; font-weight: 600; color: var(--text-primary); text-align: center; margin-bottom: 0.5rem; min-height: 1.7em; }
+        .profile-section .lawyer-specialty { font-size: 0.95rem; color: var(--text-secondary); text-align: center; margin-bottom: 1.5rem; min-height: 1.2em; }
+        .profile-section .card-text { min-height: 3em; }
+        .profile-section .btn-profile { background: var(--accent); border-color: var(--accent); color: white; font-weight: 500; padding: 0.5rem 1rem; width: 100%; margin-top: auto; text-decoration: none; display: inline-block; text-align: center; flex-shrink: 0; }
+        .profile-section .btn-profile:hover { background: var(--accent-hover); border-color: var(--accent-hover); color: white; }
 
         /* Case Section Specific */
-        .case-link {
-             display: block;
-             color: var(--accent);
-             text-decoration: none;
-             font-weight: 500;
-             font-size: 0.9rem;
-             margin-top: auto; /* Push link to bottom */
-             transition: color 0.2s ease;
-        }
-        .case-link:hover {
-             color: var(--accent-hover);
-             text-decoration: underline;
-        }
+        .case-link { display: block; color: var(--accent); text-decoration: none; font-weight: 500; font-size: 0.9rem; margin-top: auto; transition: color 0.2s ease; flex-shrink: 0; }
+        .case-link:hover { color: var(--accent-hover); text-decoration: underline; }
 
         /* Ratings Specific */
-        .rating-stars {
-            color: #FFC107; /* Yellow for stars */
-            font-size: 1.3rem;
-            margin-bottom: 0.5rem;
-            text-align: center;
-        }
-        .rating-count {
-             font-size: 0.85rem;
-             color: var(--text-secondary);
-             text-align: center;
-             margin-bottom: 1rem;
-        }
+        .rating-stars { color: #FFC107; font-size: 1.3rem; margin-bottom: 0.5rem; text-align: center; flex-shrink: 0; }
+        .rating-count { font-size: 0.85rem; color: var(--text-secondary); text-align: center; margin-bottom: 1rem; flex-shrink: 0; }
 
+        /* Footer Styling */
+        footer { background-color: #000; padding: 1.5rem 0; margin-top: auto; border-top: 1px solid var(--border-light); text-align: center; flex-shrink: 0; }
+        .footer-text { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0; }
 
-        /* --- Footer Styling (Keep consistent) --- */
-        footer {
-            background-color: #000;
-            padding: 1.5rem 0;
-            margin-top: auto;
-            border-top: 1px solid var(--border-light);
-            text-align: center;
-        }
-        .footer-text {
-             color: var(--text-secondary);
-             font-size: 0.9rem;
-        }
-
-        /* --- Responsive Adjustments --- */
+        /* Responsive Adjustments (UPDATED) */
         @media (max-width: 992px) {
-            .dashboard-container {
-                grid-template-columns: 1fr 1.5fr;
-                grid-template-rows: auto auto auto auto auto auto;
-                grid-template-areas:
-                    "profile notifications"
-                    "lawyerinfo ratings"
-                    "currentcases pastcases"
-                    "completedcases completedcases"
-                    "winpercentage winpercentage"
-                    "footer footer";
-                 padding: 1.5rem 1rem;
-                 gap: 1rem;
-            }
-             .notifications-section { text-align: left; }
-        }
-
-        @media (max-width: 768px) {
-            .dashboard-container {
-                grid-template-columns: 1fr;
-                grid-template-rows: auto;
-                grid-template-areas:
+             /* Switch to single column earlier for better content flow */
+            main.dashboard-container {
+                grid-template-columns: 1fr; /* Single column */
+                grid-template-rows: auto; /* Auto rows */
+                grid-template-areas: /* Stack everything */
                     "profile"
                     "lawyerinfo"
-                    "notifications"
                     "ratings"
                     "currentcases"
                     "pastcases"
                     "completedcases"
                     "winpercentage";
-                 padding: 1rem 0.8rem;
-                 margin: 1rem auto;
+                 padding: 1.5rem 1rem; gap: 1rem;
             }
+        }
+        @media (max-width: 768px) {
+             /* Already single column from medium breakpoint */
             .profile-section .profile-pic-placeholder { width: 100px; height: 100px; }
-            .dashboard-card { padding: 1rem; }
-             .dashboard-card h5 { font-size: 1rem; }
-             .dashboard-card .value-display { font-size: 1.5rem; }
-             .navbar-actions { gap: 0.5rem; }
-             .navbar-brand.logo { font-size: 1.2rem;}
-             .logo-icon { font-size: 1.3rem; }
+            .dashboard-card { padding: 1rem; } .dashboard-card h5 { font-size: 1rem; } .dashboard-card .value-display { font-size: 1.5rem; }
+            .navbar-actions { gap: 0.5rem; } .navbar-brand.logo { font-size: 1.2rem;} .logo-icon { font-size: 1.3rem; }
         }
 
     </style>
 </head>
-
-<script type="text/javascript" 
-  src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit">
-</script>
 <body>
 
     <!-- Header -->
     <nav class="navbar sticky-top">
         <div class="container-fluid">
-            <a class="navbar-brand logo" href="#">
+            <a class="navbar-brand logo" href="lawyer_home.html">
                 <i class="fas fa-balance-scale logo-icon"></i>
                 Legal Assist
             </a>
             <div class="navbar-actions">
+                <!-- Notification Bell (optional, can be removed if no dynamic notifications) -->
                  <button class="notification-btn" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Notifications">
                      <i class="fas fa-bell"></i>
+                     <!-- Badge hidden by default, JS would show it -->
+                     <span class="badge rounded-pill bg-danger"></span>
                  </button>
+                 <!-- Chat Now Button (ADDED HERE) -->
+                 <a href="chat_support.html" class="btn btn-sm btn-primary"> <!-- Link to your support/chat page -->
+                     <i class="fas fa-comments me-1"></i> Chat Now
+                 </a>
+                <!-- Sign Out Button -->
                 <button class="btn btn-sm btn-outline-light" id="logout-button">
                     <i class="fas fa-sign-out-alt me-1"></i>
                     Sign Out
@@ -342,14 +178,13 @@
         </div>
     </nav>
 
-    <!-- Main Dashboard Content -->
-    <div class="dashboard-container">
+    <!-- Main Dashboard Content (No Notifications Section) -->
+    <main class="dashboard-container">
 
         <!-- Profile Section (Left) -->
         <div class="profile-section dashboard-card">
             <div class="profile-pic-placeholder default-bg" id="profile-pic-container">
-                <!-- Image loaded via JS if available -->
-                <img src="" alt="Profile Picture" id="profile-pic-img" style="display: none; width: 100%; height: 100%; object-fit: cover;">
+                <img src="" alt="Profile Picture" id="profile-pic-img">
             </div>
             <h4 class="lawyer-name" id="lawyer-name">Loading...</h4>
             <p class="lawyer-specialty" id="lawyer-specialty">Loading...</p>
@@ -367,12 +202,7 @@
              <p><strong>Approved:</strong> <span id="lawyer-approval-status">N/A</span></p>
         </div>
 
-         <!-- Notifications Section -->
-         <div class="notifications-section">
-             <a href="#" class="btn btn-sm btn-outline-secondary">
-                 <i class="fas fa-bell"></i> View Notifications
-             </a>
-         </div>
+        <!-- Notifications Section REMOVED -->
 
         <!-- Current Cases -->
         <div class="current-cases-section dashboard-card">
@@ -415,7 +245,7 @@
              <div class="value-display" id="lawyer-win-percentage">N/A</div>
         </div>
 
-    </div> <!-- End Dashboard Container -->
+    </main> <!-- End Dashboard Container -->
 
 
     <!-- Footer -->
@@ -430,8 +260,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore-compat.js"></script>
-    <!-- Add Storage if needed for profile pic -->
-    <!-- <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-storage-compat.js"></script> -->
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-storage-compat.js"></script>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -439,7 +268,7 @@
     <script>
         // --- Firebase Config ---
         const firebaseConfig = {
-            apiKey: "AIzaSyAhjxwCro-f7u68H3fEJOkc5z9PsukEpNo", // Replace
+             apiKey: "AIzaSyAhjxwCro-f7u68H3fEJOkc5z9PsukEpNo", // Replace
             authDomain: "legal-assistance-5.firebaseapp.com", // Replace
             projectId: "legal-assistance-5",                // Replace
             storageBucket: "legal-assistance-5.firebasestorage.app", // Replace
@@ -449,17 +278,19 @@
         };
 
         // --- Initialize Firebase ---
-        let app, auth, db;
+        let app, auth, db, storage;
         try {
             if (!firebase.apps.length) { app = firebase.initializeApp(firebaseConfig); }
             else { app = firebase.app(); }
             auth = firebase.auth();
             db = firebase.firestore();
-            console.log("Firebase Initialized on lawyer_home.html");
+            storage = firebase.storage();
+            console.log("Firebase Initialized (Auth, Firestore, Storage) on lawyer_home.html");
         } catch (e) {
             console.error("Firebase initialization error:", e);
             alert("Error initializing application. Dashboard cannot load.");
-            // Optional: Hide dashboard elements or show a persistent error
+            const dashboardMain = document.getElementById('dashboard-main');
+            if(dashboardMain) dashboardMain.innerHTML = '<p class="text-danger text-center p-5">Failed to initialize. Please try again later.</p>';
         }
 
         // --- Get DOM Elements ---
@@ -474,98 +305,131 @@
         const logoutButton = document.getElementById('logout-button');
         const profilePicContainer = document.getElementById('profile-pic-container');
         const profilePicImg = document.getElementById('profile-pic-img');
-        // Add elements for stats if needed later
-        // const currentCasesCountEl = document.getElementById('current-cases-count');
-        // etc.
+        // --- Get Elements for Stats ---
+        const currentCasesCountEl = document.getElementById('current-cases-count');
+        const pastCasesCountEl = document.getElementById('past-cases-count');
+        const completedCasesCountEl = document.getElementById('completed-cases-count');
+        const ratingStarsEl = document.getElementById('lawyer-rating-stars');
+        const ratingCountEl = document.getElementById('lawyer-rating-count');
+        const winPercentageEl = document.getElementById('lawyer-win-percentage');
+
 
         // --- Function to Populate Dashboard ---
         function populateDashboard(lawyerData) {
             console.log("Populating dashboard with data:", lawyerData);
             if (!lawyerData) {
-                console.error("populateDashboard called with null or undefined data.");
-                return; // Exit if no data
+                console.warn("populateDashboard called with null or undefined data.");
+                 if (lawyerNameEl) lawyerNameEl.textContent = "Profile Error";
+                 if (lawyerSpecialtyEl) lawyerSpecialtyEl.textContent = "-";
+                 if (lawyerBioEl) lawyerBioEl.textContent = "Could not load bio.";
+                return;
             }
 
             // Basic Info
-            if (lawyerNameEl) lawyerNameEl.textContent = lawyerData.fullName || lawyerData.displayName || lawyerData.username || 'Lawyer Name';
-            if (lawyerSpecialtyEl) lawyerSpecialtyEl.textContent = lawyerData.specialization || 'Specialization Not Set';
+            if (lawyerNameEl) lawyerNameEl.textContent = lawyerData.fullName || lawyerData.displayName || 'N/A';
+            if (lawyerSpecialtyEl) lawyerSpecialtyEl.textContent = Array.isArray(lawyerData.practiceAreas) && lawyerData.practiceAreas.length > 0
+                                                                    ? lawyerData.practiceAreas.join(', ')
+                                                                    : 'Specialization Not Set';
             if (lawyerBioEl) lawyerBioEl.textContent = lawyerData.bio || 'No bio provided.';
 
             // Lawyer Specific Info
             if (lawyerBarNumberEl) lawyerBarNumberEl.textContent = lawyerData.barNumber || 'N/A';
             if (lawyerBarStateEl) lawyerBarStateEl.textContent = lawyerData.barState || 'N/A';
-            if (lawyerEmailEl) lawyerEmailEl.textContent = lawyerData.email || 'N/A'; // Should exist from Auth
+            if (lawyerEmailEl) lawyerEmailEl.textContent = lawyerData.email || 'N/A';
             if (lawyerPhoneEl) lawyerPhoneEl.textContent = lawyerData.phone || 'N/A';
-            if (lawyerApprovalStatusEl) lawyerApprovalStatusEl.textContent = lawyerData.approved === true ? 'Approved' : (lawyerData.approved === false ? 'Pending Approval' : 'N/A');
+            if (lawyerApprovalStatusEl) lawyerApprovalStatusEl.textContent = lawyerData.approved === true ? 'Approved' : (lawyerData.approved === false ? 'Pending Review' : 'N/A');
 
-            // Profile Picture Handling (Check if URL exists)
+            // Profile Picture Handling
             if (profilePicContainer && profilePicImg) {
-                if (lawyerData.photoURL) { // Check for photoURL field from Firestore or Auth
-                    profilePicImg.src = lawyerData.photoURL;
-                    profilePicImg.onerror = () => { // Handle image load errors
-                        console.warn("Failed to load profile image:", lawyerData.photoURL);
+                 const picUrl = lawyerData.photoURL; // Use the potentially combined URL
+                if (picUrl) {
+                    profilePicImg.src = picUrl;
+                    profilePicImg.style.display = 'block';
+                     profilePicContainer.classList.remove('default-bg');
+                    profilePicImg.onerror = () => {
+                        console.warn("Failed to load profile image:", picUrl);
                         profilePicImg.style.display = 'none';
                         profilePicContainer.classList.add('default-bg');
                     };
-                    profilePicImg.onload = () => { // Show only on successful load
-                         profilePicImg.style.display = 'block';
+                    profilePicImg.onload = () => {
                          profilePicContainer.classList.remove('default-bg');
                     };
                 } else {
                     profilePicImg.style.display = 'none';
-                    profilePicContainer.classList.add('default-bg'); // Ensure default is shown if no URL
+                    profilePicContainer.classList.add('default-bg');
                 }
             }
 
-            // --- Placeholder for more complex data (Ratings, Stats) ---
-            // You would fetch and calculate these separately if needed
-            // const ratingStarsEl = document.getElementById('lawyer-rating-stars');
-            // const ratingCountEl = document.getElementById('lawyer-rating-count');
-            // const winPercentageEl = document.getElementById('lawyer-win-percentage');
-            // const currentCasesCountEl = document.getElementById('current-cases-count');
-            // ... fetch/calculate and update elements ...
+            // --- Populate Stats and Ratings (Using Placeholders/Example Data) ---
+             if(currentCasesCountEl) currentCasesCountEl.textContent = lawyerData.currentCasesCount || 5;
+             if(pastCasesCountEl) pastCasesCountEl.textContent = lawyerData.pastCasesCount || 23;
+             if(completedCasesCountEl) completedCasesCountEl.textContent = lawyerData.completedCasesCount || 18;
+             updateRatingDisplay(lawyerData.averageRating || 4.5, lawyerData.ratingCount || 15);
+             if(winPercentageEl) winPercentageEl.textContent = lawyerData.winPercentage ? `${lawyerData.winPercentage}%` : '85%';
+        }
+
+         // --- Update Rating Display Helper ---
+         function updateRatingDisplay(averageRating, ratingCount) {
+            if(!ratingStarsEl || !ratingCountEl) return;
+
+            ratingCount = ratingCount || 0;
+            ratingCountEl.textContent = `(Based on ${ratingCount} reviews)`;
+
+            if (averageRating && averageRating > 0) {
+                let starsHtml = '';
+                const fullStars = Math.floor(averageRating);
+                const halfStar = averageRating % 1 >= 0.5;
+                const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+                for(let i = 0; i < fullStars; i++) starsHtml += '<i class="fas fa-star"></i>';
+                if(halfStar) starsHtml += '<i class="fas fa-star-half-alt"></i>';
+                for(let i = 0; i < emptyStars; i++) starsHtml += '<i class="far fa-star"></i>';
+                ratingStarsEl.innerHTML = starsHtml;
+            } else {
+                ratingStarsEl.innerHTML = '<i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i>';
+            }
         }
 
         // --- Authentication Check & Data Fetch ---
         auth.onAuthStateChanged(async (user) => {
             if (user) {
-                // User is signed in.
                 console.log("Lawyer logged in:", user.uid);
                 const lawyerId = user.uid;
-                // *** USE THE CORRECT COLLECTION NAME: 'lawyers' ***
                 const lawyerDocRef = db.collection("lawyers").doc(lawyerId);
 
                 try {
                     const docSnap = await lawyerDocRef.get();
 
-                    if (docSnap.exists) {
+                    if (docSnap.exists()) {
                         const lawyerData = docSnap.data();
-                        // Add the photoURL from Auth user object if not in Firestore doc
-                         if (!lawyerData.photoURL && user.photoURL) {
-                            lawyerData.photoURL = user.photoURL;
-                        }
-                         // Add email from Auth user object if not in Firestore doc
-                        if (!lawyerData.email && user.email) {
-                             lawyerData.email = user.email;
-                        }
-                        populateDashboard(lawyerData); // Call function to update HTML
+                        const combinedData = {
+                            ...lawyerData,
+                            email: lawyerData.email || user.email || 'N/A',
+                            photoURL: lawyerData.profilePicUrl || user.photoURL || null
+                        };
+
+                        if (!combinedData.fullName || !combinedData.barNumber || !combinedData.practiceAreas || combinedData.practiceAreas.length === 0) {
+                            console.warn("Lawyer profile seems incomplete. Redirecting...");
+                             alert("Please complete your profile information to access the dashboard.");
+                             window.location.href = 'lawyer_info.html';
+                             return;
+                         }
+
+                        populateDashboard(combinedData);
                     } else {
-                        // Lawyer profile doesn't exist in Firestore!
-                        console.error("Firestore profile not found in 'lawyers' collection for logged-in lawyer:", lawyerId);
-                        alert("Your profile data is missing or incomplete. Please complete your profile.");
-                        window.location.href = 'lawyer_info.html'; // Redirect to completion page
+                        console.error("Firestore profile not found for logged-in lawyer:", lawyerId);
+                        alert("Your profile data is missing. Please complete your profile registration.");
+                        window.location.href = 'lawyer_info.html';
                     }
                 } catch (error) {
                     console.error("Error fetching lawyer profile:", error);
                     if (lawyerNameEl) lawyerNameEl.textContent = "Error loading profile";
                     if (lawyerSpecialtyEl) lawyerSpecialtyEl.textContent = "";
-                     alert("Could not load profile data. Please try again later.");
+                    alert("Could not load your profile data. Please refresh the page or try again later.");
                 }
 
             } else {
-                // User is signed out. Redirect to login.
                 console.log("User is not logged in. Redirecting to lawyer login.");
-                window.location.href = 'lawyer_login.html'; // Redirect to lawyer login page
+                window.location.href = 'lawyer_login.html';
             }
         });
 
@@ -576,7 +440,7 @@
                 try {
                     await auth.signOut();
                     console.log('User signed out successfully.');
-                    window.location.href = 'index.html'; // Redirect to role selection or public home
+                     window.location.href = 'lawyer_login.html'; // Redirect to lawyer login page after logout
                 } catch (error) {
                     console.error('Error signing out:', error);
                     alert('Error signing out. Please try again.');
