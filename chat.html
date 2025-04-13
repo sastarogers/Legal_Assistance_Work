@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- *** CHANGE TITLE *** -->
-    <title>Find Legal Assistance - Legal Assist Bot</title>
+    <title>Chat - LegalAssist</title>
 
-    <!-- CSS Links (Keep As Is) -->
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Styles (Keep As Is) -->
     <style>
         :root {
             --primary-bg: #0a0a0a;
@@ -29,53 +29,126 @@
             --option-button-hover-bg: #505050;
             --option-button-text: var(--text-primary);
         }
-        /* ... (Keep all existing CSS styles) ... */
-        .system-info { /* Style for info/error messages */
-            padding: 0.5rem 1rem;
-            font-size: 0.85rem;
-            text-align: center;
-            color: var(--text-secondary);
-            margin-top: 0.5rem;
-            font-style: italic;
-        }
-        .system-info.error { color: #cf6679; }
-        .system-info.success { color: #4caf50; }
 
+        html, body { height: 100%; }
+        body { font-family: 'Inter', sans-serif; background: var(--primary-bg); color: var(--text-primary); display: flex; flex-direction: column; }
+
+        /* --- Header --- */
+        .navbar { background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-light); padding: 0.8rem 0; flex-shrink: 0; }
+        .navbar-brand.logo { font-weight: 700; letter-spacing: -0.5px; font-size: 1.4rem; color: var(--text-primary); text-decoration: none; display: inline-flex; align-items: center; }
+        .logo-icon { color: var(--accent); margin-right: 0.6rem; font-size: 1.5rem; }
+
+        /* --- Chat Container --- */
+        .chat-container { flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; padding-top: 1.5rem; padding-bottom: 1.5rem; }
+        .chat-window { flex-grow: 1; background-color: var(--card-bg); border: 1px solid var(--border-light); border-radius: var(--bs-border-radius-lg); padding: 1.5rem; overflow-y: auto; margin-bottom: 1rem; display: flex; flex-direction: column; }
+        .message-list { display: flex; flex-direction: column; gap: 0.8rem; margin-top: auto; /* Pushes messages to bottom */}
+
+        /* Individual Message Styling */
+        .message { padding: 0.75rem 1.25rem; border-radius: 1.25rem; max-width: 75%; line-height: 1.5; word-wrap: break-word; }
+        .message p:last-child { margin-bottom: 0; } /* Remove bottom margin on last paragraph within a message */
+        .message p { margin-bottom: 0.5rem; font-size: 0.95rem; } /* Add some margin between text and options if needed */
+
+        .user-message { background-color: var(--user-message-bg); color: var(--white); align-self: flex-end; border-bottom-right-radius: 0.5rem; }
+        .bot-message { background-color: var(--bot-message-bg); color: var(--text-primary); align-self: flex-start; border-bottom-left-radius: 0.5rem; }
+
+        /* --- Option Buttons within Bot Message --- */
+        .message-options {
+            display: flex;
+            flex-wrap: wrap; /* Allow buttons to wrap */
+            gap: 0.5rem;
+            margin-top: 0.75rem; /* Space between bot text and options */
+        }
+        .option-button {
+            background-color: var(--option-button-bg);
+            color: var(--option-button-text);
+            border: 1px solid var(--border-light);
+            border-radius: 50px; /* Pill shape */
+            padding: 0.4rem 1rem;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            text-align: left; /* Align text left within button */
+        }
+        .option-button:hover:not(:disabled) {
+            background-color: var(--option-button-hover-bg);
+            transform: translateY(-1px); /* Subtle lift */
+        }
+        .option-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none; /* Prevent hover effect */
+        }
+
+        /* --- Chat Input Area --- */
+        .chat-input-area { display: flex; gap: 0.75rem; padding: 1rem; background-color: var(--card-bg); border: 1px solid var(--border-light); border-radius: var(--bs-border-radius-lg); align-items: flex-end; /* Align items to bottom for textarea grow */ }
+        .chat-input { flex-grow: 1; background-color: #2f2f2f; border: 1px solid var(--border-light); color: var(--text-primary); border-radius: 24px; /* Match button height */ padding: 0.75rem 1.25rem; resize: none; font-size: 0.95rem; line-height: 1.5; max-height: 120px; /* Limit growth */ overflow-y: auto; /* Allow scrolling within textarea */ transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease; }
+        .chat-input:focus { background-color: #333; border-color: var(--accent); box-shadow: 0 0 0 0.25rem rgba(var(--accent-rgb, 126, 87, 194), 0.3); outline: none; }
+        .chat-input::placeholder { color: var(--text-secondary); opacity: 0.7; }
+         .chat-input:disabled { background-color: #252525; opacity: 0.7; cursor: not-allowed;} /* Style for disabled input */
+        .chat-send-btn { flex-shrink: 0; background-color: var(--accent); color: var(--white); border: none; border-radius: 50%; width: 48px; height: 48px; display: inline-flex; align-items: center; justify-content: center; font-size: 1.2rem; transition: background-color 0.2s ease, transform 0.1s ease; }
+        .chat-send-btn:hover:not(:disabled) { background-color: var(--accent-hover); transform: scale(1.05); }
+        .chat-send-btn:active:not(:disabled) { transform: scale(0.98); }
+        .chat-send-btn:disabled { background-color: #555; opacity: 0.6; cursor: not-allowed; transform: none; } /* Style for disabled button */
+
+
+        /* --- Footer --- */
+        footer { background-color: #000; padding: 1.5rem 0; margin-top: auto; border-top: 1px solid var(--border-light); flex-shrink: 0; }
+        .footer-text { color: var(--text-secondary); font-size: 0.85rem; }
+
+        /* --- Responsive Adjustments --- */
+        @media (max-width: 768px) {
+             .message { max-width: 85%; }
+             .chat-window { padding: 1rem; }
+             .chat-input-area { padding: 0.75rem; }
+        }
+        @media (max-width: 576px) {
+             .navbar-brand.logo { font-size: 1.2rem; }
+             .logo-icon { font-size: 1.3rem; }
+             .chat-window { border-radius: 0.8rem; }
+             .chat-input-area { border-radius: 0.8rem; gap: 0.5rem; }
+             .chat-input { padding: 0.6rem 1rem; font-size: 0.9rem; }
+             .chat-send-btn { width: 42px; height: 42px; font-size: 1rem; }
+             .option-button { font-size: 0.8rem; padding: 0.35rem 0.9rem; }
+        }
     </style>
 </head>
 <body>
-    <!-- Header (Keep As Is, maybe update link/text) -->
+    <!-- Header -->
     <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container">
-            <a class="navbar-brand logo" href="home.html"> <!-- Link back to client home/dashboard -->
+            <a class="navbar-brand logo" href="home.html"> <!-- Link back to a potential home/dashboard -->
                 <i class="fas fa-balance-scale logo-icon"></i>
                 Legal Assist Bot
             </a>
+            <!-- Optional: Add other nav items or logout button -->
              <button class="btn btn-sm btn-outline-light" id="logout-button">
                  <i class="fas fa-sign-out-alt me-1"></i>
-                 Sign Out
+                 Sign Out <!-- Adjust destination if needed -->
              </button>
         </div>
     </nav>
 
-    <!-- Main Chat Area (Keep As Is) -->
+    <!-- Main Chat Area -->
     <main class="chat-container container">
+
+        <!-- Chat Message Window -->
         <div class="chat-window" id="chat-window">
             <div class="message-list" id="message-list">
                 <!-- Messages will be added here dynamically by JS -->
-                 <!-- ** Added system message area ** -->
-                 <div id="system-message-area" class="system-info">Initializing...</div>
             </div>
         </div>
+
+        <!-- Chat Input -->
         <div class="chat-input-area">
-            <textarea class="form-control chat-input" id="chat-input" placeholder="Type your response..." rows="1" disabled></textarea>
-            <button class="btn chat-send-btn" id="send-button" aria-label="Send message" disabled>
+            <textarea class="form-control chat-input" id="chat-input" placeholder="Type your response..." rows="1"></textarea>
+            <button class="btn chat-send-btn" id="send-button" aria-label="Send message">
                 <i class="fas fa-paper-plane"></i>
             </button>
         </div>
+
     </main>
 
-    <!-- Footer (Keep As Is) -->
+    <!-- Footer -->
     <footer>
         <div class="container text-center">
             <p class="footer-text mb-0">© 2025 Legal Assist. All rights reserved.</p>
@@ -84,10 +157,9 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- *** ADD FIREBASE SDKs *** -->
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
-    <!-- Firestore might be needed if fetching client name, etc. Optional for basic flow. -->
+    <!-- Firebase SDKs - Optional -->
+    <!-- <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script> -->
+    <!-- <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script> -->
     <!-- <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore-compat.js"></script> -->
 
     <script>
@@ -97,85 +169,45 @@
             const sendButton = document.getElementById('send-button');
             const messageList = document.getElementById('message-list');
             const chatWindow = document.getElementById('chat-window');
-            const logoutButton = document.getElementById('logout-button');
-            const systemMessageArea = document.getElementById('system-message-area'); // Get system message div
+            const logoutButton = document.getElementById('logout-button'); // Assuming logout button exists
 
-            // --- Firebase Config (Same as lawyer_info.html) ---
-             const firebaseConfig = {
-                 apiKey: "YOUR_API_KEY", // Replace
-                 authDomain: "YOUR_AUTH_DOMAIN", // Replace
-                 projectId: "YOUR_PROJECT_ID",                // Replace
-                 storageBucket: "YOUR_STORAGE_BUCKET", // Replace
-                 messagingSenderId: "YOUR_MESSAGING_SENDER_ID",              // Replace
-                 appId: "YOUR_APP_ID", // Replace
-                 measurementId: "YOUR_MEASUREMENT_ID" // Optional
-             };
-
-             // --- Initialize Firebase ---
-             let app, auth, db;
-             let currentUser = null; // Store logged-in user info
-             try {
-                 if (!firebase.apps.length) {
-                     app = firebase.initializeApp(firebaseConfig);
-                 } else {
-                     app = firebase.app();
-                 }
-                 auth = firebase.auth();
-                 // db = firebase.firestore(); // Uncomment if needed
-                 console.log("Firebase Initialized on chat.html");
-             } catch (e) {
-                 console.error("Firebase initialization error:", e);
-                 showSystemMessage("Error initializing application. Cannot proceed.", "error");
-                 toggleInputArea(false); // Keep input disabled
-                 // Potentially redirect or disable everything
-             }
-
-            // --- Authentication Check ---
-            auth.onAuthStateChanged(user => {
-                if (user) {
-                    currentUser = user;
-                    console.log("Client logged in:", currentUser.uid);
-                     showSystemMessage(`Welcome! Starting chat session...`, "success");
-                     // Start the chat flow *only after* confirming login
-                     askToStart();
-                } else {
-                    currentUser = null;
-                    console.log("Client not logged in. Redirecting...");
-                    showSystemMessage("You must be logged in to use the chat. Redirecting...", "error");
-                    toggleInputArea(false);
-                    setTimeout(() => {
-                        window.location.href = 'client_login.html'; // Or your main client login page
-                    }, 2500);
-                }
-            });
-
-
-            // --- State Management & Helper Functions (Keep As Is) ---
-            let currentChatState = 'AWAITING_START';
-            const userData = { /* ... */ };
+            // --- State Management ---
+            let currentChatState = 'AWAITING_START'; // Initial state
+            const userData = {
+                caseType: null,
+                location: null,
+                budget: null,
+                details: null
+            };
             const caseTypeOptions = ["Divorce", "Criminal", "Property", "Labor", "Other"];
 
-            function scrollToBottom() { /* ... keep as is ... */ }
+            // --- Helper Functions ---
+            function scrollToBottom() {
+                // A small delay ensures content is rendered before scrolling
+                setTimeout(() => {
+                    chatWindow.scrollTop = chatWindow.scrollHeight;
+                }, 50);
+            }
 
             function toggleInputArea(enabled, placeholder = "Type your response...") {
-                // Only enable if user is logged in
-                const shouldEnable = enabled && !!currentUser;
-                chatInput.disabled = !shouldEnable;
-                sendButton.disabled = !shouldEnable;
-                chatInput.placeholder = shouldEnable ? placeholder : (currentUser ? "Please select an option above..." : "Please log in...");
-                if (!shouldEnable) {
-                    chatInput.value = '';
-                    chatInput.style.height = 'auto';
-                }
-             }
+                 chatInput.disabled = !enabled;
+                 sendButton.disabled = !enabled;
+                 chatInput.placeholder = enabled ? placeholder : "Please select an option above...";
+                 if (!enabled) {
+                    chatInput.value = ''; // Clear input when disabled
+                    chatInput.style.height = 'auto'; // Reset height
+                 } else {
+                    // Focus input when enabled (optional, can be annoying on mobile)
+                    // chatInput.focus();
+                 }
+            }
 
-             // *** IMPORTANT: Update addMessage to handle the lawyer selection handler ***
             function addMessage(text, type, options = []) {
                 const messageDiv = document.createElement('div');
                 messageDiv.classList.add('message', type === 'user' ? 'user-message' : 'bot-message');
 
                 const messageP = document.createElement('p');
-                messageP.innerHTML = text.replace(/\n/g, '<br>');
+                messageP.innerHTML = text.replace(/\n/g, '<br>'); // Ensure newlines become breaks
                 messageDiv.appendChild(messageP);
 
                 if (options.length > 0 && type === 'bot') {
@@ -187,23 +219,32 @@
                         button.classList.add('option-button');
 
                         if (typeof option === 'string') {
-                            // Simple Text Button (e.g., case types)
+                            // --- Simple Text Button ---
                             button.textContent = option;
                             button.addEventListener('click', () => {
-                                // No need to add "Selected: ..." message for simple choices, looks cleaner
-                                // addMessage(`Selected: ${option}`, 'user');
+                                addMessage(`Selected: ${option}`, 'user');
                                 optionsDiv.querySelectorAll('.option-button').forEach(btn => btn.disabled = true);
-                                handleUserInput(option); // Pass the selected text value
+                                handleUserInput(option);
                             });
-                        } else if (typeof option === 'object' && option.text && option.dataAttributes && option.handler) {
-                            // ** This case is for LAWYER buttons **
+                        } else if (typeof option === 'object' && option.text) {
+                            // --- Button from Object (with data & specific handler) ---
                             button.textContent = option.text;
-                            // Attach data attributes (like lawyerId)
-                            for (const key in option.dataAttributes) {
-                                button.dataset[key] = option.dataAttributes[key];
+                            if (option.dataAttributes) {
+                                for (const key in option.dataAttributes) {
+                                    button.dataset[key] = option.dataAttributes[key];
+                                }
                             }
-                            // Attach the specific handler (handleLawyerSelection)
-                            button.addEventListener('click', option.handler);
+                            // Attach the correct handler
+                            if (option.handler) {
+                                button.addEventListener('click', option.handler);
+                            } else {
+                                // Default handler if none provided (for non-lawyer buttons)
+                                button.addEventListener('click', () => {
+                                    addMessage(`Selected: ${option.text}`, 'user');
+                                    optionsDiv.querySelectorAll('.option-button').forEach(btn => btn.disabled = true);
+                                    handleUserInput(option.text);
+                                });
+                            }
                         }
                         optionsDiv.appendChild(button);
                     });
@@ -214,246 +255,256 @@
                 scrollToBottom();
             }
 
-            // --- Conversation Flow Functions (Keep askToStart, askCaseType, etc. as is) ---
-            function askToStart() { /* ... keep as is ... */ }
-            function askCaseType() { /* ... keep as is ... */ }
-            function askLocation() { /* ... keep as is ... */ }
-            function askBudget() { /* ... keep as is ... */ }
-            function askDetails() { /* ... keep as is ... */ }
+            // --- Conversation Flow Functions ---
+            function askToStart() {
+                 addMessage("Hi there! I can help you find legal assistance. Say 'Hi' or 'Start' to begin.", 'bot');
+                 currentChatState = 'AWAITING_START';
+                 toggleInputArea(true, "Say 'Hi' or 'Start'...");
+            }
 
-            // --- Update showLawyers ---
+            function askCaseType() {
+                addMessage("Great! Please select the category that best fits your legal issue:", 'bot', caseTypeOptions);
+                currentChatState = 'AWAITING_CASE_TYPE';
+                toggleInputArea(false); // Disable text input, wait for button click
+            }
+
+            function askLocation() {
+                 addMessage("Understood. Could you please provide your current City and State? (e.g., Mumbai, Maharashtra)", 'bot');
+                 currentChatState = 'AWAITING_LOCATION';
+                 toggleInputArea(true, "Enter City, State...");
+            }
+
+             function askBudget() {
+                 addMessage("Thank you. What is your approximate budget for legal fees? (e.g., 'Under 20k', '50k-1L', 'Flexible')\nThis helps filter suggestions.", 'bot');
+                 currentChatState = 'AWAITING_BUDGET';
+                 toggleInputArea(true, "Enter approximate budget...");
+            }
+
+             function askDetails() {
+                 addMessage("Okay, please briefly describe your legal issue or question below. The more detail, the better the match.", 'bot');
+                 currentChatState = 'AWAITING_DETAILS';
+                 toggleInputArea(true, "Describe your case briefly...");
+                 chatInput.rows = 3; // Make input area larger for details
+                 chatInput.style.height = 'auto'; // Allow it to resize initially
+                 chatInput.style.height = (chatInput.scrollHeight) + 'px';
+            }
+
             function showLawyers() {
-                 chatInput.rows = 1;
+                 chatInput.rows = 1; // Reset input rows after details
                  addMessage("Thank you for the details. Searching for lawyers based on:\n"+
-                            `- Case Type: ${userData.caseType || 'N/A'}\n`+ // Handle potentially null values
-                            `- Location: ${userData.location || 'N/A'}\n`+
-                            `- Budget: ${userData.budget || 'N/A'}\n`+
-                            `- Details: (Provided)`
+                            `- Case Type: ${userData.caseType}\n`+
+                            `- Location: ${userData.location}\n`+
+                            `- Budget: ${userData.budget}\n`+
+                            `- Details: (Provided)` // Optionally show snippet
                  , 'bot');
                  toggleInputArea(false, "Searching for lawyers...");
                  currentChatState = 'SHOWING_LAWYERS';
 
                  // --- !!! Placeholder: Backend Integration Needed !!! ---
-                 addMessage("<i>Finding suitable lawyers... Please wait.</i>", 'bot');
+                 // TODO:
+                 // 1. Make a fetch POST request to your Python backend API endpoint.
+                 // 2. Send the `userData` object.
+                 // 3. Backend performs NLP, DB queries (vector + lawyer).
+                 // 4. Backend returns JSON like: { lawyers: [{id: '...', name: '...', spec: '...', rating: 4.5, location: '...'}, ...] }
+                 // 5. Call `displayLawyerResults(data.lawyers)` in the .then() block.
 
-                 // ** Replace this setTimeout with a fetch() call to your backend API **
-                 // Example fetch:
-                 // const backendUrl = 'https://your-main-website.com/api/find-lawyers'; // Your actual backend endpoint
-                 // fetch(backendUrl, {
-                 //     method: 'POST',
-                 //     headers: { 'Content-Type': 'application/json', /* Add Auth header if needed */ },
-                 //     body: JSON.stringify(userData)
-                 // })
-                 // .then(response => {
-                 //     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                 //     return response.json();
-                 // })
-                 // .then(data => {
-                 //      removeLoadingMessage();
-                 //      displayLawyerResults(data.lawyers); // Assuming backend returns { lawyers: [...] }
-                 // })
-                 // .catch(error => {
-                 //     console.error("Error fetching lawyers:", error);
-                 //     removeLoadingMessage();
-                 //     addMessage("Sorry, there was an error finding lawyers. Please try again later or contact support.", 'bot');
-                 //     // Optionally allow user to restart?
-                 // });
-
-                  // Simulate backend call & response (KEEP FOR TESTING UNTIL BACKEND IS READY)
+                  // Simulate backend call & response
+                 addMessage("<i>Finding suitable lawyers...</i>", 'bot'); // Loading indicator
                  setTimeout(() => {
-                     removeLoadingMessage();
+                     // Remove loading message (find and remove the 'Finding...' message)
+                     const loadingMsg = Array.from(messageList.querySelectorAll('.bot-message p'))
+                                             .find(p => p.innerHTML.includes('Finding suitable lawyers...'));
+                     if (loadingMsg) loadingMsg.closest('.message').remove();
+
+
+                     // --- Replace with actual data from fetch response ---
+                     // Ensure each lawyer has a unique 'id'
                      const mockLawyers = [
-                         { id: 'lawyer123', name: `Adv. ${userData.caseType} Specialist`, location: userData.location || 'Nearby', rating: 4.8 },
-                         { id: 'lawyer456', name: `Adv. ${userData.caseType} Expert`, location: userData.location || 'Nearby', rating: 4.5 },
-                         { id: 'lawyer789', name: `Law Firm ${userData.caseType} Group`, location: userData.location || 'Nearby', rating: 4.2 }
+                         { id: 'lawyer123', name: `Advocate ${userData.caseType} Specialist`, location: userData.location, rating: 4.8 },
+                         { id: 'lawyer456', name: `Advocate ${userData.caseType} Expert`, location: userData.location, rating: 4.5 },
+                         { id: 'lawfirm789', name: `Law Firm ${userData.caseType} Group`, location: userData.location, rating: 4.2 }
                      ];
+                     // ---
+
                      displayLawyerResults(mockLawyers);
-                 }, 2500);
+
+                 }, 2500); // Simulate network delay
+
             }
 
-            // --- Update displayLawyerResults ---
             function displayLawyerResults(lawyers) {
                  if (lawyers && lawyers.length > 0) {
-                     let lawyerIntroText = "Based on your information, here are a few suggested lawyers. Click on a name to request a chat:\n";
-                     addMessage(lawyerIntroText, 'bot');
+                    let lawyerIntroText = "Based on your information, here are a few suggested lawyers. Click on a name to start a chat with them:\n";
+                    addMessage(lawyerIntroText, 'bot'); // Send intro text first
 
-                     const lawyerButtons = lawyers.map((lawyer) => {
-                         return {
-                             text: `${lawyer.name} (${lawyer.location}, Rating: ${lawyer.rating || 'N/A'})`,
-                             dataAttributes: { // Data to attach to the button element
-                                 lawyerId: lawyer.id,
-                                 lawyerName: lawyer.name
-                             },
-                             // *** CRITICAL: Use the NEW handler ***
-                             handler: handleLawyerSelectionRequest
-                         };
-                     });
+                    // Create button data structure for addMessage function
+                    const lawyerButtons = lawyers.map((lawyer) => {
+                        return {
+                            text: `${lawyer.name} (${lawyer.location}, Rating: ${lawyer.rating || 'N/A'})`,
+                            dataAttributes: { // Data to attach to the button element
+                                lawyerId: lawyer.id, // Store the unique lawyer ID
+                                lawyerName: lawyer.name // Optional: store name too
+                            },
+                            handler: handleLawyerSelection // Specific handler for these buttons
+                        };
+                    });
 
+                    // Add a new message containing only the buttons
+                    // Using a placeholder or empty text as the intro is separate
                      addMessage("--- Suggestions ---", 'bot', lawyerButtons);
-                     addMessage("<i>You will be notified on your dashboard when the lawyer accepts your chat request.</i>", 'bot'); // Inform user
 
                  } else {
-                     addMessage("I couldn't find specific lawyer suggestions based on the information provided. You may want to try broadening your criteria or searching manually.", 'bot');
-                     currentChatState = 'ENDED';
-                     toggleInputArea(false, "Chat ended.");
+                    addMessage("I couldn't find specific lawyer suggestions based on the information provided. You may want to try broadening your criteria or searching manually.", 'bot');
+                    currentChatState = 'ENDED';
+                    toggleInputArea(false, "Chat ended.");
                  }
-                 toggleInputArea(false, "Please select a lawyer above."); // Keep text input disabled
+                 // Keep input disabled - user must click a button or refresh
+                 toggleInputArea(false, "Please select a lawyer above.");
             }
 
-             // --- NEW Handler for Lawyer Button Clicks - Initiates Chat Request ---
-             async function handleLawyerSelectionRequest(event) {
+            // Handler for Lawyer Button Clicks - Redirects
+            function handleLawyerSelection(event) {
                  const button = event.currentTarget;
                  const lawyerId = button.dataset.lawyerId;
                  const lawyerName = button.dataset.lawyerName;
 
-                 if (!lawyerId) {
-                     console.error("Lawyer ID not found on the button.");
-                     addMessage("Sorry, there was an error selecting that lawyer.", 'bot');
-                     return;
-                 }
-                 if (!currentUser) {
-                     addMessage("Error: You seem to be logged out. Please log in again.", 'bot');
-                     // Optionally redirect to login
-                     return;
-                 }
+                 if (lawyerId) {
+                    console.log(`Redirecting to chat with Lawyer ID: ${lawyerId}, Name: ${lawyerName}`);
 
-                 // Disable all buttons in the group immediately
-                 const optionsDiv = button.closest('.message-options');
-                 if (optionsDiv) {
-                     optionsDiv.querySelectorAll('.option-button').forEach(btn => btn.disabled = true);
-                 }
-
-                 addMessage(`Requesting chat with ${lawyerName}...`, 'user'); // Show user action
-                 toggleInputArea(false, "Sending chat request..."); // Disable further input
-
-                 // --- !!! Backend Integration: Call /api/chat/request !!! ---
-                 const chatRequestUrl = 'https://your-main-website.com/api/chat/request'; // ** MUST BE YOUR ACTUAL BACKEND URL **
-
-                 try {
-                     const response = await fetch(chatRequestUrl, {
-                         method: 'POST',
-                         headers: {
-                             'Content-Type': 'application/json',
-                             // 'Authorization': `Bearer ${await currentUser.getIdToken()}` // Add Firebase Auth token if backend requires it
-                         },
-                         body: JSON.stringify({
-                             lawyerId: lawyerId,
-                             clientId: currentUser.uid // Send the logged-in client's UID
-                         })
-                     });
-
-                     if (!response.ok) {
-                         // Try to get error message from backend response body
-                         let errorMsg = `HTTP error ${response.status}`;
-                         try {
-                             const errorData = await response.json();
-                             errorMsg = errorData.message || errorMsg;
-                         } catch (parseError) { /* Ignore if body isn't JSON */ }
-                         throw new Error(errorMsg);
+                    // Disable all buttons in the same options group visually
+                     const optionsDiv = button.closest('.message-options');
+                     if (optionsDiv) {
+                         optionsDiv.querySelectorAll('.option-button').forEach(btn => btn.disabled = true);
                      }
+                      // Add a temporary confirmation message before redirecting (optional)
+                      addMessage(`Connecting you with ${lawyerName}...`, 'user'); // Or 'bot' style
 
-                     // Optional: Backend might return the chatSessionId if needed immediately, but likely not required for this flow
-                     // const responseData = await response.json();
-                     // console.log("Chat request successful:", responseData);
+                    // Construct the URL for the lawyer-specific chat page
+                    // *** MAKE SURE 'lawyer_chat.html' EXISTS ***
+                    const targetUrl = `lawyer_chat.html?lawyerId=${encodeURIComponent(lawyerId)}&lawyerName=${encodeURIComponent(lawyerName)}`;
 
-                     addMessage(`Chat request sent to ${lawyerName}. Please check your main dashboard for notifications when they accept. This bot session will now end.`, 'bot');
-                     currentChatState = 'ENDED'; // End the bot flow here
+                    // Redirect the user after a short delay
+                    setTimeout(() => {
+                        window.location.href = targetUrl;
+                    }, 800); // Delay in ms (optional, allows user to see confirmation)
 
-                 } catch (error) {
-                     console.error("Error sending chat request:", error);
-                     addMessage(`Sorry, there was an error sending the chat request to ${lawyerName}. Error: ${error.message}. Please try again later or contact support.`, 'bot');
-                     // Re-enable buttons on error? Or leave disabled? Depends on desired UX.
-                      if (optionsDiv) {
-                          optionsDiv.querySelectorAll('.option-button').forEach(btn => btn.disabled = false); // Example: Re-enable
-                      }
-                     toggleInputArea(false, "Error sending request. Please try again."); // Keep input disabled or guide user
+                 } else {
+                     console.error("Lawyer ID not found on the button.");
+                     addMessage("Sorry, there was an error selecting that lawyer. Please try again or refresh.", 'bot');
                  }
-             }
+            }
 
 
-            // --- Main Input Handler (Keep As Is) ---
+            // --- Main Input Handler ---
             function handleUserInput(input = null) {
-                 /* ... keep existing state machine logic ... */
-                const text = input !== null ? input : chatInput.value.trim();
+                const text = input !== null ? input : chatInput.value.trim(); // Use button input or text area value
 
-                if (!text && input === null) return;
+                if (!text && input === null) return; // Ignore empty submissions from text area
 
-                 // Add user message only if it came from the text input
-                  if (input === null) {
-                      addMessage(text, 'user');
-                      chatInput.value = '';
-                      chatInput.style.height = 'auto';
-                  }
+                // Add user message only if it came from the text input
+                 if (input === null) {
+                     addMessage(text, 'user');
+                     chatInput.value = ''; // Clear input field
+                     chatInput.style.height = 'auto'; // Reset height back after potential growth
+                 }
+                 // Button clicks (like case type) handle adding their "Selected: ..." message within their own logic or addMessage setup
 
-                // State Machine Logic (no changes needed inside the switch for this integration)
+                // State Machine Logic
                 switch (currentChatState) {
                     case 'AWAITING_START':
-                         if (text.toLowerCase() === 'hi' || text.toLowerCase() === 'start') askCaseType();
-                         else addMessage("Please type 'Hi' or 'Start' to begin.", 'bot');
-                         break;
+                        if (text.toLowerCase() === 'hi' || text.toLowerCase() === 'start') {
+                            askCaseType();
+                        } else {
+                            addMessage("Please type 'Hi' or 'Start' to begin.", 'bot');
+                        }
+                        break;
                     case 'AWAITING_CASE_TYPE':
-                         if (caseTypeOptions.includes(text)) { userData.caseType = text; askLocation(); }
-                         break;
+                        // Input comes from button click via event listener directly calling handleUserInput via addMessage setup
+                        if (caseTypeOptions.includes(text)) {
+                             userData.caseType = text;
+                             askLocation();
+                        } // No 'else' needed as input is restricted
+                        break;
                     case 'AWAITING_LOCATION':
-                         if (text) { userData.location = text; askBudget(); }
-                         else { addMessage("Please enter your City and State.", 'bot'); toggleInputArea(true, "Enter City, State..."); }
-                         break;
+                         if(text){
+                             userData.location = text;
+                             askBudget();
+                         } else {
+                              addMessage("Please enter your City and State.", 'bot');
+                              // Re-enable input if user submitted empty
+                               toggleInputArea(true, "Enter City, State...");
+                         }
+                        break;
                     case 'AWAITING_BUDGET':
-                         if (text) { userData.budget = text; askDetails(); }
-                         else { addMessage("Please provide an approximate budget.", 'bot'); toggleInputArea(true, "Enter approximate budget..."); }
-                         break;
+                         if(text){
+                             userData.budget = text;
+                             askDetails();
+                         } else {
+                              addMessage("Please provide an approximate budget.", 'bot');
+                               toggleInputArea(true, "Enter approximate budget...");
+                         }
+                        break;
                      case 'AWAITING_DETAILS':
-                          if (text) { userData.details = text; showLawyers(); }
-                          else { addMessage("Please describe your case briefly.", 'bot'); toggleInputArea(true, "Describe your case briefly..."); }
-                          break;
-                     case 'SHOWING_LAWYERS':
-                          addMessage("Please click on one of the lawyer options above to request a chat.", 'bot');
-                          break;
+                         if(text){
+                             userData.details = text;
+                             showLawyers(); // Moves to next step, disables input
+                         } else {
+                              addMessage("Please describe your case briefly.", 'bot');
+                              toggleInputArea(true, "Describe your case briefly...");
+                         }
+                         break;
+                    case 'SHOWING_LAWYERS':
+                         // User input is now handled by button clicks (handleLawyerSelection) which redirect.
+                         // Text input is disabled, but if somehow enabled, guide user:
+                         addMessage("Please click on one of the lawyer options above to start a chat.", 'bot');
+                         break;
                     case 'ENDED':
-                         addMessage("This chat has concluded. Please refresh the page or return to your dashboard.", 'bot');
-                         toggleInputArea(false, "Chat ended.");
+                         addMessage("This chat has concluded. Please refresh the page to start a new session.", 'bot');
+                         toggleInputArea(false, "Chat ended. Refresh to start over.");
                          break;
                      default:
                          console.warn("Reached default state handler for state:", currentChatState);
                          addMessage("Sorry, I seem to have lost my place. Let's start over.", 'bot');
                          askToStart();
                  }
+            }
 
-             }
+            // --- Event Listeners ---
+            if (sendButton && chatInput) {
+                sendButton.addEventListener('click', () => handleUserInput());
+
+                chatInput.addEventListener('keypress', (event) => {
+                    // Send on Enter unless Shift is pressed (for newline)
+                    if (event.key === 'Enter' && !event.shiftKey) {
+                        event.preventDefault(); // Prevent default newline behavior
+                        handleUserInput();
+                    }
+                });
+
+                 // Auto-resize textarea based on content
+                 chatInput.addEventListener('input', () => {
+                     chatInput.style.height = 'auto'; // Temporarily shrink to get correct scrollHeight
+                     let scrollHeight = chatInput.scrollHeight;
+                     const maxHeight = 120; // Match CSS max-height
+                     if (scrollHeight > maxHeight) {
+                         chatInput.style.height = maxHeight + 'px';
+                     } else {
+                         chatInput.style.height = scrollHeight + 'px';
+                     }
+                 }, false);
+            }
 
 
-            // --- Event Listeners (Keep As Is) ---
-            if (sendButton && chatInput) { /* ... keep existing listeners ... */ }
-            if(logoutButton){
-                 logoutButton.addEventListener('click', () => {
+            if(logoutButton){ // Logout logic
+                logoutButton.addEventListener('click', () => {
                     console.log('Logout initiated...');
-                     auth.signOut().then(() => {
-                         // Sign-out successful. Auth state change listener will handle redirect.
-                         console.log('User signed out.');
-                     }).catch((error) => {
-                         console.error('Sign out error', error);
-                         showSystemMessage(`Error signing out: ${error.message}`, "error");
-                     });
+                    // Replace with actual logout mechanism (e.g., clearing session, redirecting)
+                    window.location.href = 'index.html'; // Or login page
                 });
             }
 
-             // --- System Message Helper ---
-             function showSystemMessage(message, type = "info") {
-                 if (systemMessageArea) {
-                     systemMessageArea.textContent = message;
-                     systemMessageArea.className = `system-info ${type}`; // Set class based on type
-                     systemMessageArea.style.display = 'block';
-                 } else {
-                     // Fallback if the dedicated area isn't found (add as a bot message)
-                     addMessage(`<i>System: ${message}</i>`, 'bot');
-                 }
-             }
-
-
             // --- Initialise Chat ---
-            // ** Don't call askToStart() here. It's called inside the onAuthStateChanged listener **
-             showSystemMessage("Checking login status...", "info");
-             toggleInputArea(false); // Start disabled
+            askToStart(); // Start the conversation
 
         });
         // === CHAT LOGIC END ===
